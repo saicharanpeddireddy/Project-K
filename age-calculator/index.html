@@ -5,58 +5,80 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Calculate your exact age in years, months, and days. See your next birthday countdown instantly." />
   <title>Age Calculator — Know Your Exact Age</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <style>
     /* =========================================================
        CSS CUSTOM PROPERTIES (Design Tokens)
+       Colors inspired by: #003366 (navy), #518428 (green),
+       #336699 (mid-blue) — blended with modern card aesthetics.
+       Font: Arial, Helvetica, sans-serif (from reference CSS).
     ========================================================= */
     :root {
-      --clr-bg:            #f0f4ff;
+      /* ── Palette ── */
+      --clr-navy:          #003366;
+      --clr-blue:          #336699;
+      --clr-blue-light:    #d1dde9;
+      --clr-green:         #518428;
+      --clr-green-dark:    #417516;
+      --clr-green-light:   #e3edda;
+
+      /* ── Backgrounds ── */
+      --clr-bg:            #eef2f7;
       --clr-card:          #ffffff;
-      --clr-card-border:   rgba(99, 102, 241, 0.12);
-      --clr-text-primary:  #1e1b4b;
-      --clr-text-secondary:#6b7280;
-      --clr-accent:        #6366f1;
-      --clr-accent-dark:   #4f46e5;
-      --clr-accent-light:  #e0e7ff;
-      --clr-success:       #10b981;
-      --clr-error:         #ef4444;
-      --clr-error-bg:      #fef2f2;
-      --clr-result-bg:     #f8faff;
-      --clr-stat-bg:       #eff0ff;
-      --clr-stat-border:   rgba(99, 102, 241, 0.14);
-      --clr-countdown-bg:  linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-      --clr-input-border:  #d1d5db;
-      --clr-input-focus:   #6366f1;
-      --clr-shadow:        rgba(99, 102, 241, 0.18);
-      --clr-toggle-bg:     #e5e7eb;
-      --radius-card:       1.5rem;
-      --radius-btn:        0.75rem;
-      --radius-input:      0.6rem;
-      --transition:        0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      --font:              'Inter', system-ui, sans-serif;
+      --clr-card-border:   rgba(0, 51, 102, 0.14);
+      --clr-stat-bg:       #d1dde9;
+      --clr-stat-border:   rgba(0, 51, 102, 0.18);
+      --clr-result-bg:     #f4f7fb;
+      --clr-error-bg:      #ffcccc;
+      --clr-error-border:  #ffaaaa;
+
+      /* ── Text ── */
+      --clr-text-primary:  #000000;
+      --clr-text-secondary:#555555;
+      --clr-text-muted:    #888888;
+      --clr-text-white:    #ffffff;
+      --clr-heading:       #003366;
+      --clr-link:          #336699;
+
+      /* ── Inputs (from reference CSS) ── */
+      --clr-input-border:  #044284;
+      --clr-input-bg:      #ffffff;
+
+      /* ── Countdown gradient ── */
+      --clr-countdown-bg:  linear-gradient(135deg, #003366 0%, #336699 100%);
+      --clr-shadow:        rgba(0, 51, 102, 0.18);
+
+      /* ── Toggle ── */
+      --clr-toggle-bg:     #d1dde9;
+
+      /* ── Radii & transitions ── */
+      --radius-card:       1.25rem;
+      --radius-btn:        3px;
+      --radius-input:      2px;
+      --transition:        0.22s cubic-bezier(0.4, 0, 0.2, 1);
+
+      /* ── Font from reference CSS ── */
+      --font:              arial, helvetica, sans-serif;
     }
 
-    /* ── Dark Mode Overrides ── */
+    /* ── Dark Mode ── */
     [data-theme="dark"] {
-      --clr-bg:            #0f0e17;
-      --clr-card:          #1a1a2e;
-      --clr-card-border:   rgba(99, 102, 241, 0.25);
-      --clr-text-primary:  #e8e8f0;
+      --clr-bg:            #0d1520;
+      --clr-card:          #132036;
+      --clr-card-border:   rgba(51, 102, 153, 0.35);
+      --clr-text-primary:  #e8edf5;
       --clr-text-secondary:#9ca3af;
-      --clr-accent:        #818cf8;
-      --clr-accent-dark:   #6366f1;
-      --clr-accent-light:  #1e1b4b;
-      --clr-result-bg:     #16162a;
-      --clr-stat-bg:       #1e1b4b;
-      --clr-stat-border:   rgba(129, 140, 248, 0.18);
-      --clr-input-border:  #374151;
-      --clr-toggle-bg:     #374151;
-      --clr-error-bg:      #2d1515;
-      --clr-shadow:        rgba(99, 102, 241, 0.3);
+      --clr-text-muted:    #6b7a90;
+      --clr-heading:       #7ab3e0;
+      --clr-link:          #7ab3e0;
+      --clr-stat-bg:       #1a2e45;
+      --clr-stat-border:   rgba(51, 102, 153, 0.35);
+      --clr-input-border:  #336699;
+      --clr-input-bg:      #0d1520;
+      --clr-toggle-bg:     #1a2e45;
+      --clr-error-bg:      #2d0f0f;
+      --clr-error-border:  #7a2020;
+      --clr-shadow:        rgba(0, 51, 102, 0.45);
     }
 
     /* =========================================================
@@ -68,50 +90,97 @@
       padding: 0;
     }
 
-    html {
-      scroll-behavior: smooth;
-    }
+    html { scroll-behavior: smooth; }
 
+    /* Base body — font, size, color from reference CSS */
     body {
       font-family: var(--font);
-      background-color: var(--clr-bg);
+      font-size: 16px;
       color: var(--clr-text-primary);
+      background-color: var(--clr-bg);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      transition: background-color var(--transition), color var(--transition);
       padding: 1.5rem 1rem;
+      transition: background-color var(--transition), color var(--transition);
     }
 
-    /* Soft background blobs for depth */
+    /* Subtle background blobs */
     body::before,
     body::after {
       content: '';
       position: fixed;
       border-radius: 50%;
-      filter: blur(120px);
-      opacity: 0.35;
+      filter: blur(130px);
+      opacity: 0.22;
       pointer-events: none;
       z-index: 0;
     }
     body::before {
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, #6366f1 0%, transparent 70%);
-      top: -150px;
-      right: -150px;
+      width: 480px; height: 480px;
+      background: radial-gradient(circle, #336699 0%, transparent 70%);
+      top: -120px; right: -120px;
     }
     body::after {
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, #8b5cf6 0%, transparent 70%);
-      bottom: -100px;
-      left: -100px;
+      width: 380px; height: 380px;
+      background: radial-gradient(circle, #518428 0%, transparent 70%);
+      bottom: -80px; left: -80px;
+    }
+
+    /* Headings — from reference CSS */
+    h1 {
+      color: var(--clr-heading);
+      font-size: 26px;
+      font-weight: bold;
+      margin: 12px 0;
+      font-family: var(--font);
+    }
+    h2 {
+      font-size: 22px;
+      font-weight: bold;
+      color: var(--clr-heading);
+      margin-bottom: 2px;
+    }
+
+    p { margin: 5px 0 8px 0; }
+    a { color: var(--clr-link); text-decoration: underline; }
+    a:hover { text-decoration: none; }
+    hr { border: 0; color: #aaa; background-color: #aaa; height: 1px; }
+
+    /* ── Inputs (from reference CSS — classic professional style) ── */
+    input[type="date"] {
+      width: 100%;
+      padding: 8px 10px;
+      font-family: var(--font);
+      font-size: 16px;
+      color: var(--clr-text-primary);
+      background-color: var(--clr-input-bg);
+      border: 1px solid var(--clr-input-border);
+      border-radius: var(--radius-input);
+      box-shadow: 1px 1px 2px #666;
+      outline: none;
+      cursor: pointer;
+      transition:
+        border-color var(--transition),
+        box-shadow var(--transition),
+        background-color var(--transition),
+        color var(--transition);
+      -webkit-appearance: none;
+    }
+
+    input[type="date"]:focus {
+      border-color: #003366;
+      box-shadow: 1px 1px 3px #336699, 0 0 0 3px rgba(0, 51, 102, 0.12);
+    }
+
+    [data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      opacity: 0.7;
     }
 
     /* =========================================================
-       LAYOUT WRAPPERS
+       LAYOUT
     ========================================================= */
     .page-wrapper {
       position: relative;
@@ -121,7 +190,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1.5rem;
+      gap: 1.25rem;
       flex: 1;
     }
 
@@ -143,36 +212,36 @@
     }
 
     .logo-icon {
-      width: 38px;
-      height: 38px;
-      background: var(--clr-countdown-bg);
-      border-radius: 10px;
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #003366 0%, #336699 100%);
+      border-radius: 8px;
       display: grid;
       place-items: center;
       font-size: 1.2rem;
       flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0,51,102,0.3);
     }
 
     .logo-text {
-      font-size: 1.125rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, #6366f1, #8b5cf6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      letter-spacing: -0.02em;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--clr-navy);
+      letter-spacing: 0.01em;
+      font-family: var(--font);
     }
+    [data-theme="dark"] .logo-text { color: #7ab3e0; }
 
     /* ── Dark Mode Toggle ── */
     .theme-toggle {
       background: var(--clr-toggle-bg);
-      border: none;
+      border: 1px solid var(--clr-input-border);
       border-radius: 999px;
       width: 52px;
       height: 28px;
       cursor: pointer;
       position: relative;
-      transition: background-color var(--transition);
+      transition: background-color var(--transition), border-color var(--transition);
       flex-shrink: 0;
     }
 
@@ -182,29 +251,31 @@
       width: 20px;
       height: 20px;
       border-radius: 50%;
-      background: #fff;
-      top: 4px;
-      left: 4px;
+      background: #003366;
+      top: 3px;
+      left: 3px;
       transition: transform var(--transition), background-color var(--transition);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
     }
 
     [data-theme="dark"] .theme-toggle {
-      background: var(--clr-accent);
+      background: #336699;
+      border-color: #336699;
     }
 
     [data-theme="dark"] .theme-toggle::after {
       transform: translateX(24px);
-      background: #1a1a2e;
+      background: #e8edf5;
     }
 
     .theme-toggle-label {
-      font-size: 0.72rem;
+      font-size: 13px;
       color: var(--clr-text-secondary);
-      font-weight: 500;
+      font-weight: bold;
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      font-family: var(--font);
     }
 
     /* =========================================================
@@ -215,297 +286,278 @@
       background: var(--clr-card);
       border: 1px solid var(--clr-card-border);
       border-radius: var(--radius-card);
-      padding: 2.25rem 2rem;
+      padding: 2rem 1.75rem;
       box-shadow:
-        0 4px 6px -1px rgba(0,0,0,0.07),
-        0 20px 60px -10px var(--clr-shadow);
+        0 2px 4px rgba(0,0,0,0.08),
+        0 16px 50px -10px var(--clr-shadow);
       transition:
         background-color var(--transition),
         border-color var(--transition),
         box-shadow var(--transition);
     }
 
-    /* ── Card Hero heading ── */
     .card-title {
-      font-size: 1.6rem;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      line-height: 1.2;
-      margin-bottom: 0.35rem;
+      color: var(--clr-heading);
+      font-size: 26px;
+      font-weight: bold;
+      margin: 0 0 4px 0;
+      font-family: var(--font);
     }
 
+    .card-title em {
+      font-style: italic;
+      color: #518428;
+    }
+    [data-theme="dark"] .card-title em { color: #8bc34a; }
+
     .card-subtitle {
-      font-size: 0.875rem;
+      font-size: 15px;
       color: var(--clr-text-secondary);
-      font-weight: 400;
-      margin-bottom: 1.75rem;
+      margin-bottom: 1.5rem;
     }
 
     /* =========================================================
-       FORM
+       FORM GROUPS
     ========================================================= */
     .form-group {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
-      margin-bottom: 1.25rem;
+      gap: 5px;
+      margin-bottom: 1rem;
+    }
+
+    /* Two-column layout for the two date fields */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
     }
 
     label {
-      font-size: 0.825rem;
-      font-weight: 600;
+      font-size: 13px;
+      font-weight: bold;
       color: var(--clr-text-secondary);
-      letter-spacing: 0.05em;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-family: var(--font);
+    }
+
+    /* "Today" tag badge next to As of Date label */
+    .today-badge {
+      display: inline-block;
+      background: #518428;
+      color: #fff;
+      font-size: 10px;
+      font-weight: bold;
+      padding: 1px 5px;
+      border-radius: 3px;
+      margin-left: 5px;
+      vertical-align: middle;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
     }
 
-    input[type="date"] {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      font-family: var(--font);
-      font-size: 1rem;
-      font-weight: 500;
-      color: var(--clr-text-primary);
-      background: var(--clr-card);
-      border: 1.5px solid var(--clr-input-border);
-      border-radius: var(--radius-input);
-      outline: none;
-      transition:
-        border-color var(--transition),
-        box-shadow var(--transition),
-        background-color var(--transition);
-      cursor: pointer;
-      -webkit-appearance: none;
-    }
-
-    input[type="date"]:focus {
-      border-color: var(--clr-input-focus);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-    }
-
-    input[type="date"]::-webkit-calendar-picker-indicator {
-      opacity: 0.5;
-      cursor: pointer;
-      filter: var(--date-icon-filter, none);
-    }
-
-    [data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
-      filter: invert(1);
-    }
-
-    /* ── Calculate Button ── */
+    /* ── Submit Button — green with arrow (from reference CSS) ── */
     .btn-calculate {
       width: 100%;
-      padding: 0.875rem 1.5rem;
+      padding: 11px 50px 11px 16px;
       font-family: var(--font);
-      font-size: 1rem;
-      font-weight: 700;
+      font-size: 16px;
+      font-weight: bold;
       color: #fff;
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-      border: none;
+      background-color: #4c7b25;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="180px" height="40px"><circle cx="112" cy="20" r="11" fill="darkseagreen"/><path d="M110 12 L120 20 L110 28 Z" fill="white"/></svg>');
+      background-repeat: no-repeat;
+      border: 0;
       border-radius: var(--radius-btn);
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      transition:
-        transform var(--transition),
-        box-shadow var(--transition),
-        opacity var(--transition);
-      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+      transition: background-color var(--transition), transform var(--transition), box-shadow var(--transition);
+      box-shadow: 0 2px 6px rgba(76, 123, 37, 0.4);
       letter-spacing: 0.01em;
     }
 
-    /* Button shimmer effect */
+    /* Shimmer sweep on hover */
     .btn-calculate::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255,255,255,0.2),
-        transparent
-      );
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
       transition: left 0.5s ease;
     }
 
-    .btn-calculate:hover::before {
-      left: 100%;
-    }
-
+    .btn-calculate:hover::before { left: 100%; }
     .btn-calculate:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+      background-color: #444;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
     }
-
     .btn-calculate:active {
       transform: translateY(0);
-      box-shadow: 0 4px 10px rgba(99, 102, 241, 0.35);
+      background-color: #333;
     }
 
     /* =========================================================
-       ERROR MESSAGE
+       ERROR MESSAGE (from reference CSS .inputErrMsg style)
     ========================================================= */
     .error-msg {
       display: none;
       align-items: center;
       gap: 0.5rem;
-      background: var(--clr-error-bg);
-      color: var(--clr-error);
-      border: 1px solid rgba(239, 68, 68, 0.25);
-      border-radius: var(--radius-input);
-      padding: 0.65rem 1rem;
-      font-size: 0.875rem;
-      font-weight: 500;
+      background-color: var(--clr-error-bg);
+      border: 1px solid var(--clr-error-border);
+      color: #900;
+      padding: 6px 10px;
+      font-size: 14px;
+      font-weight: bold;
       margin-top: 0.75rem;
-      animation: slideDown 0.25s ease;
+      border-radius: 2px;
+      animation: slideDown 0.22s ease;
+      font-family: var(--font);
     }
 
-    .error-msg.visible {
-      display: flex;
-    }
+    .error-msg.visible { display: flex; }
 
     /* =========================================================
-       RESULT SECTION
+       RESULTS SECTION
     ========================================================= */
     .result-section {
       display: none;
       flex-direction: column;
-      gap: 1rem;
-      margin-top: 1.5rem;
-      /* Keyframe animation applied via JS */
+      gap: 0.9rem;
+      margin-top: 1.4rem;
     }
 
     .result-section.visible {
       display: flex;
-      animation: fadeSlideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation: fadeSlideUp 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
 
-    /* ── Section label ── */
+    /* ── Result label ── */
     .result-label {
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 0.07em;
       text-transform: uppercase;
       color: var(--clr-text-secondary);
-      margin-bottom: 0.1rem;
+      margin-bottom: 0;
     }
 
-    /* ── Age stats grid ── */
+    /* ── Stats grid — background matches reference's #d1dde9 ── */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 0.75rem;
+      gap: 0.6rem;
     }
 
     .stat-card {
       background: var(--clr-stat-bg);
       border: 1px solid var(--clr-stat-border);
-      border-radius: 1rem;
-      padding: 1rem 0.75rem;
+      border-radius: 6px;
+      padding: 0.85rem 0.5rem;
       text-align: center;
-      transition:
-        background-color var(--transition),
-        transform var(--transition);
+      transition: background-color var(--transition), transform var(--transition);
+      box-shadow: 1px 1px 2px rgba(0,51,102,0.08);
     }
 
-    .stat-card:hover {
-      transform: translateY(-3px);
-    }
+    .stat-card:hover { transform: translateY(-3px); }
 
     .stat-value {
       font-size: 2rem;
-      font-weight: 800;
-      color: var(--clr-accent);
-      letter-spacing: -0.03em;
+      font-weight: bold;
+      color: var(--clr-navy);
       line-height: 1;
       display: block;
+      font-family: var(--font);
     }
+    [data-theme="dark"] .stat-value { color: #7ab3e0; }
 
     .stat-unit {
-      font-size: 0.72rem;
-      font-weight: 600;
+      font-size: 12px;
+      font-weight: bold;
       color: var(--clr-text-secondary);
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      margin-top: 0.3rem;
+      margin-top: 4px;
       display: block;
     }
 
-    /* ── Birthday Countdown Card ── */
+    /* ── Countdown card — navy gradient from reference #003366 ── */
     .countdown-card {
       background: var(--clr-countdown-bg);
-      border-radius: 1rem;
-      padding: 1.25rem 1.5rem;
+      border-radius: 6px;
+      padding: 1.1rem 1.3rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 1rem;
+      gap: 0.75rem;
       color: #fff;
+      box-shadow: 0 3px 10px rgba(0,51,102,0.3);
     }
 
     .countdown-left {
       display: flex;
       flex-direction: column;
-      gap: 0.2rem;
+      gap: 3px;
     }
 
     .countdown-eyebrow {
-      font-size: 0.72rem;
-      font-weight: 600;
-      opacity: 0.8;
+      font-size: 11px;
+      font-weight: bold;
+      opacity: 0.85;
       letter-spacing: 0.06em;
       text-transform: uppercase;
     }
 
     .countdown-headline {
       font-size: 1rem;
-      font-weight: 700;
+      font-weight: bold;
     }
 
     .countdown-sub {
-      font-size: 0.8rem;
-      opacity: 0.75;
-      margin-top: 0.1rem;
+      font-size: 13px;
+      opacity: 0.78;
+      margin-top: 2px;
     }
 
     .countdown-badge {
-      background: rgba(255,255,255,0.2);
-      backdrop-filter: blur(8px);
-      border-radius: 0.75rem;
-      padding: 0.6rem 1rem;
+      background: rgba(255,255,255,0.18);
+      border-radius: 4px;
+      padding: 0.5rem 0.9rem;
       text-align: center;
       flex-shrink: 0;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2);
     }
 
     .countdown-days {
       font-size: 2rem;
-      font-weight: 800;
+      font-weight: bold;
       line-height: 1;
       display: block;
     }
 
     .countdown-days-label {
-      font-size: 0.68rem;
-      font-weight: 600;
-      opacity: 0.8;
+      font-size: 11px;
+      font-weight: bold;
+      opacity: 0.85;
       text-transform: uppercase;
       letter-spacing: 0.06em;
     }
 
-    /* ── Birthday today special state ── */
+    /* Birthday today — green (from reference #518428) */
     .countdown-card.is-today {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      background: linear-gradient(135deg, #518428 0%, #417516 100%);
     }
 
-    /* ── Divider ── */
+    /* Result divider */
     .result-divider {
       height: 1px;
-      background: var(--clr-card-border);
+      background: #aaa;
       border: none;
+      opacity: 0.4;
     }
 
     /* =========================================================
@@ -513,94 +565,52 @@
     ========================================================= */
     footer {
       margin-top: auto;
-      padding-top: 1.5rem;
+      padding-top: 1.25rem;
       text-align: center;
-      font-size: 0.78rem;
+      font-size: 13px;
       color: var(--clr-text-secondary);
       position: relative;
       z-index: 1;
+      font-family: var(--font);
     }
 
-    footer a {
-      color: var(--clr-accent);
-      text-decoration: none;
-    }
-
-    footer a:hover {
-      text-decoration: underline;
-    }
+    footer a { color: var(--clr-link); }
 
     /* =========================================================
        ANIMATIONS
     ========================================================= */
     @keyframes fadeSlideUp {
-      from {
-        opacity: 0;
-        transform: translateY(18px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-8px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     /* Staggered stat cards */
-    .stat-card:nth-child(1) { animation-delay: 0.05s; }
-    .stat-card:nth-child(2) { animation-delay: 0.12s; }
-    .stat-card:nth-child(3) { animation-delay: 0.19s; }
+    .stat-card:nth-child(1) { animation-delay: 0.04s; }
+    .stat-card:nth-child(2) { animation-delay: 0.1s; }
+    .stat-card:nth-child(3) { animation-delay: 0.16s; }
 
     /* =========================================================
        RESPONSIVE
     ========================================================= */
     @media (max-width: 480px) {
-      .card {
-        padding: 1.75rem 1.25rem;
-        border-radius: 1.1rem;
-      }
-
-      .card-title {
-        font-size: 1.35rem;
-      }
-
-      .stat-value {
-        font-size: 1.6rem;
-      }
-
-      .countdown-card {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .countdown-badge {
-        width: 100%;
-        text-align: left;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-      }
-
-      .countdown-days {
-        font-size: 1.5rem;
-      }
+      .card { padding: 1.5rem 1rem; }
+      .card-title { font-size: 22px; }
+      .form-row { grid-template-columns: 1fr; }
+      .stat-value { font-size: 1.55rem; }
+      .countdown-card { flex-direction: column; align-items: flex-start; }
+      .countdown-badge { width: 100%; display: flex; align-items: center; gap: 0.6rem; }
+      .countdown-days { font-size: 1.5rem; }
     }
   </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════
-     PAGE WRAPPER
-══════════════════════════════════════════ -->
+<!-- ─── PAGE WRAPPER ─── -->
 <div class="page-wrapper">
 
   <!-- ── Header ── -->
@@ -622,22 +632,43 @@
   </header>
 
   <!-- ── Main Card ── -->
-  <main>
+  <main style="width:100%">
     <div class="card" role="main">
       <h1 class="card-title">How old are you, <em>exactly?</em></h1>
-      <p class="card-subtitle">Enter your date of birth to find out your precise age and next birthday.</p>
+      <p class="card-subtitle">Enter your date of birth and the target date to find your precise age.</p>
 
       <!-- Form -->
       <form id="age-form" novalidate>
-        <div class="form-group">
-          <label for="dob">Date of Birth</label>
-          <input
-            type="date"
-            id="dob"
-            name="dob"
-            aria-label="Date of Birth"
-            aria-required="true"
-          />
+
+        <!-- Two date fields side by side -->
+        <div class="form-row">
+
+          <!-- Date of Birth -->
+          <div class="form-group" style="margin-bottom:0">
+            <label for="dob">Date of Birth</label>
+            <input
+              type="date"
+              id="dob"
+              name="dob"
+              aria-label="Date of Birth"
+              aria-required="true"
+            />
+          </div>
+
+          <!-- As of Date (defaults to today, editable) -->
+          <div class="form-group" style="margin-bottom:0">
+            <label for="asof">
+              As of Date
+              <span class="today-badge" id="today-badge">Today</span>
+            </label>
+            <input
+              type="date"
+              id="asof"
+              name="asof"
+              aria-label="As of Date (defaults to today)"
+            />
+          </div>
+
         </div>
 
         <!-- Error message -->
@@ -652,11 +683,11 @@
           id="btn-calculate"
           aria-label="Calculate my age"
         >
-          Calculate Age ✨
+          Calculate Age
         </button>
       </form>
 
-      <!-- ── Result Section ── -->
+      <!-- ── Results ── -->
       <section
         class="result-section"
         id="result-section"
@@ -665,8 +696,8 @@
       >
         <hr class="result-divider" />
 
-        <!-- Age breakdown -->
         <p class="result-label">Your Age</p>
+
         <div class="stats-grid" id="stats-grid">
           <div class="stat-card">
             <span class="stat-value" id="years-val">0</span>
@@ -686,8 +717,8 @@
         <div class="countdown-card" id="countdown-card">
           <div class="countdown-left">
             <span class="countdown-eyebrow">Next Birthday</span>
-            <span class="countdown-headline" id="countdown-headline">Mar 27, 2027</span>
-            <span class="countdown-sub" id="countdown-sub">You'll be turning 26</span>
+            <span class="countdown-headline" id="countdown-headline">—</span>
+            <span class="countdown-sub" id="countdown-sub">—</span>
           </div>
           <div class="countdown-badge">
             <span class="countdown-days" id="countdown-days">—</span>
@@ -696,7 +727,6 @@
         </div>
 
       </section>
-      <!-- /result-section -->
     </div>
   </main>
 
@@ -705,244 +735,227 @@
     <p>Built with ❤️ using plain HTML, CSS &amp; JS &nbsp;·&nbsp; &copy; <span id="footer-year"></span> AgeCalc</p>
   </footer>
 
-</div>
-<!-- /page-wrapper -->
+</div><!-- /page-wrapper -->
 
 
-<!-- ══════════════════════════════════════════
-     JAVASCRIPT
-══════════════════════════════════════════ -->
 <script>
   /* ─────────────────────────────────────────
-     UTILITY: Get today's date at midnight
+     UTILITY: ISO date string "YYYY-MM-DD"
+     for a given Date object (local time)
   ───────────────────────────────────────── */
-  function today() {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d;
+  function toISOLocal(d) {
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
   }
 
   /* ─────────────────────────────────────────
-     UTILITY: Format a Date as "MMM DD, YYYY"
+     UTILITY: Parse "YYYY-MM-DD" safely
+     (avoids UTC timezone offset issues)
+  ───────────────────────────────────────── */
+  function parseDate(str) {
+    const [y, m, d] = str.split('-').map(Number);
+    const dt = new Date(y, m - 1, d);
+    dt.setHours(0, 0, 0, 0);
+    return dt;
+  }
+
+  /* ─────────────────────────────────────────
+     UTILITY: Format Date → "MMM DD, YYYY"
   ───────────────────────────────────────── */
   function formatDate(date) {
     return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+      year: 'numeric', month: 'short', day: 'numeric'
     });
   }
 
   /* ─────────────────────────────────────────
-     AGE CALCULATION
-     Returns { years, months, days } accurately
-     using calendar arithmetic.
+     SET "As of Date" TO TODAY ON LOAD
+     and hide the "Today" badge when user edits it
   ───────────────────────────────────────── */
-  function calcAge(dobDate) {
-    const now = today();
-    let years  = now.getFullYear() - dobDate.getFullYear();
-    let months = now.getMonth()    - dobDate.getMonth();
-    let days   = now.getDate()     - dobDate.getDate();
+  const asofInput  = document.getElementById('asof');
+  const todayBadge = document.getElementById('today-badge');
+  const todayStr   = toISOLocal(new Date());
 
-    // Borrow from months if days are negative
+  asofInput.value = todayStr;  // default = today
+
+  asofInput.addEventListener('change', function () {
+    // Show badge only when value equals today
+    todayBadge.style.display = (this.value === todayStr) ? '' : 'none';
+  });
+
+  /* ─────────────────────────────────────────
+     AGE CALCULATION
+     Calculates from dobDate → asofDate
+     Returns { years, months, days }
+  ───────────────────────────────────────── */
+  function calcAge(dobDate, asofDate) {
+    let years  = asofDate.getFullYear() - dobDate.getFullYear();
+    let months = asofDate.getMonth()    - dobDate.getMonth();
+    let days   = asofDate.getDate()     - dobDate.getDate();
+
     if (days < 0) {
       months--;
-      // Days in the previous month relative to today
-      const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+      // Days in the month before asofDate
+      const prevMonth = new Date(asofDate.getFullYear(), asofDate.getMonth(), 0);
       days += prevMonth.getDate();
     }
-
-    // Borrow from years if months are negative
-    if (months < 0) {
-      years--;
-      months += 12;
-    }
+    if (months < 0) { years--; months += 12; }
 
     return { years, months, days };
   }
 
   /* ─────────────────────────────────────────
      BIRTHDAY COUNTDOWN
-     Returns { daysLeft, nextBirthday, turningAge }
+     Relative to asofDate
   ───────────────────────────────────────── */
-  function calcCountdown(dobDate) {
-    const now  = today();
-    const thisYear = now.getFullYear();
-
-    // Next birthday this year
+  function calcCountdown(dobDate, asofDate) {
+    const thisYear = asofDate.getFullYear();
     let nextBD = new Date(thisYear, dobDate.getMonth(), dobDate.getDate());
 
-    // If birthday already passed this year, look at next year
-    if (nextBD < now) {
+    if (nextBD < asofDate) {
       nextBD = new Date(thisYear + 1, dobDate.getMonth(), dobDate.getDate());
     }
 
-    // Days remaining
-    const msPerDay = 24 * 60 * 60 * 1000;
-    const daysLeft = Math.round((nextBD - now) / msPerDay);
-
-    // Age they'll be turning
+    const msPerDay   = 24 * 60 * 60 * 1000;
+    const daysLeft   = Math.round((nextBD - asofDate) / msPerDay);
     const turningAge = nextBD.getFullYear() - dobDate.getFullYear();
 
     return { daysLeft, nextBirthday: nextBD, turningAge };
   }
 
   /* ─────────────────────────────────────────
-     SHOW ERROR
+     ERROR HELPERS
   ───────────────────────────────────────── */
   function showError(msg) {
-    const el    = document.getElementById('error-msg');
-    const elTxt = document.getElementById('error-text');
-    elTxt.textContent = msg;
+    const el = document.getElementById('error-msg');
+    document.getElementById('error-text').textContent = msg;
     el.classList.add('visible');
   }
-
-  /* ─────────────────────────────────────────
-     HIDE ERROR
-  ───────────────────────────────────────── */
   function hideError() {
     document.getElementById('error-msg').classList.remove('visible');
   }
 
   /* ─────────────────────────────────────────
-     ANIMATE COUNT-UP for stat values
+     COUNT-UP ANIMATION
   ───────────────────────────────────────── */
   function animateCount(el, target, duration = 600) {
-    const start    = performance.now();
-    const from     = 0;
-
-    function step(timestamp) {
-      const elapsed  = timestamp - start;
-      const progress = Math.min(elapsed / duration, 1);
-      // Ease out cubic
-      const eased    = 1 - Math.pow(1 - progress, 3);
-      el.textContent = Math.round(from + (target - from) * eased);
-      if (progress < 1) requestAnimationFrame(step);
-    }
-
-    requestAnimationFrame(step);
+    const start = performance.now();
+    (function step(ts) {
+      const p = Math.min((ts - start) / duration, 1);
+      const e = 1 - Math.pow(1 - p, 3);          // ease-out cubic
+      el.textContent = Math.round(target * e);
+      if (p < 1) requestAnimationFrame(step);
+    })(performance.now());
   }
 
   /* ─────────────────────────────────────────
      RENDER RESULTS
   ───────────────────────────────────────── */
-  function renderResults(dobDate) {
-    const { years, months, days }           = calcAge(dobDate);
-    const { daysLeft, nextBirthday, turningAge } = calcCountdown(dobDate);
+  function renderResults(dobDate, asofDate) {
+    const { years, months, days }               = calcAge(dobDate, asofDate);
+    const { daysLeft, nextBirthday, turningAge } = calcCountdown(dobDate, asofDate);
 
-    // ── Show result section with animation reset ──
+    // Re-trigger entrance animation
     const section = document.getElementById('result-section');
     section.classList.remove('visible');
-    // Force reflow to re-trigger animation
     void section.offsetWidth;
     section.classList.add('visible');
 
-    // ── Animate stat counters ──
+    // Count-up animations
     animateCount(document.getElementById('years-val'),  years,  700);
     animateCount(document.getElementById('months-val'), months, 550);
     animateCount(document.getElementById('days-val'),   days,   400);
 
-    // ── Countdown card ──
-    const countdownCard  = document.getElementById('countdown-card');
-    const headlineEl     = document.getElementById('countdown-headline');
-    const subEl          = document.getElementById('countdown-sub');
-    const daysEl         = document.getElementById('countdown-days');
-    const daysLabelEl    = document.getElementById('countdown-days-label');
+    // Countdown card
+    const card       = document.getElementById('countdown-card');
+    const headline   = document.getElementById('countdown-headline');
+    const sub        = document.getElementById('countdown-sub');
+    const daysEl     = document.getElementById('countdown-days');
+    const daysLabel  = document.getElementById('countdown-days-label');
 
     if (daysLeft === 0) {
-      // 🎉 Birthday today!
-      countdownCard.classList.add('is-today');
-      headlineEl.textContent    = '🎉 Happy Birthday!';
-      subEl.textContent         = `You are turning ${turningAge} today!`;
-      daysEl.textContent        = '🎂';
-      daysLabelEl.textContent   = 'Today!';
+      card.classList.add('is-today');
+      headline.textContent  = '🎉 Happy Birthday!';
+      sub.textContent       = `Turning ${turningAge} today!`;
+      daysEl.textContent    = '🎂';
+      daysLabel.textContent = 'Today!';
     } else {
-      countdownCard.classList.remove('is-today');
-      headlineEl.textContent    = formatDate(nextBirthday);
-      subEl.textContent         = `You'll be turning ${turningAge}`;
-      daysLabelEl.textContent   = 'days away';
+      card.classList.remove('is-today');
+      headline.textContent  = formatDate(nextBirthday);
+      sub.textContent       = `Turning ${turningAge}`;
+      daysLabel.textContent = 'days away';
       animateCount(daysEl, daysLeft, 800);
     }
   }
 
   /* ─────────────────────────────────────────
-     FORM SUBMIT HANDLER
+     FORM SUBMIT
   ───────────────────────────────────────── */
   document.getElementById('age-form').addEventListener('submit', function (e) {
     e.preventDefault();
     hideError();
 
-    const dobInput = document.getElementById('dob');
-    const rawValue = dobInput.value; // "YYYY-MM-DD"
+    const dobVal  = document.getElementById('dob').value;
+    const asofVal = asofInput.value || todayStr;   // fallback to today
 
-    // ── Validation 1: Empty input ──
-    if (!rawValue) {
+    // Validate DOB not empty
+    if (!dobVal) {
       showError('Please select your date of birth to continue.');
       return;
     }
 
-    // Parse date parts manually to avoid timezone shift issues
-    const [yyyy, mm, dd] = rawValue.split('-').map(Number);
-    const dobDate = new Date(yyyy, mm - 1, dd); // month is 0-indexed
-    dobDate.setHours(0, 0, 0, 0);
+    const dobDate  = parseDate(dobVal);
+    const asofDate = parseDate(asofVal);
 
-    // ── Validation 2: Future date ──
-    if (dobDate > today()) {
-      showError('Date of birth cannot be in the future. Please check and try again.');
+    // DOB must not be after As of Date
+    if (dobDate > asofDate) {
+      showError('Date of birth cannot be after the "As of" date.');
       return;
     }
 
-    // ── Validation 3: Unrealistically old (> 130 years) ──
+    // Sanity: not more than 130 years old
     const maxAge = 130;
-    const minDate = new Date(today().getFullYear() - maxAge, today().getMonth(), today().getDate());
+    const minDate = new Date(asofDate.getFullYear() - maxAge, asofDate.getMonth(), asofDate.getDate());
     if (dobDate < minDate) {
-      showError(`Please enter a date after ${formatDate(minDate)}.`);
+      showError(`Please enter a date of birth after ${formatDate(minDate)}.`);
       return;
     }
 
-    // All good — render results
-    renderResults(dobDate);
+    renderResults(dobDate, asofDate);
   });
 
   /* ─────────────────────────────────────────
      DARK MODE TOGGLE
   ───────────────────────────────────────── */
-  const themeToggleBtn = document.getElementById('theme-toggle');
-  const themeIcon      = document.getElementById('theme-icon');
+  const themeBtn  = document.getElementById('theme-toggle');
+  const themeIcon = document.getElementById('theme-icon');
 
-  // Load saved preference
   (function initTheme() {
-    const savedTheme = localStorage.getItem('agecalc-theme');
-    if (savedTheme === 'dark') {
+    if (localStorage.getItem('agecalc-theme') === 'dark') {
       document.documentElement.setAttribute('data-theme', 'dark');
-      themeToggleBtn.setAttribute('aria-checked', 'true');
+      themeBtn.setAttribute('aria-checked', 'true');
       themeIcon.textContent = '☀️';
     }
   })();
 
-  themeToggleBtn.addEventListener('click', function () {
+  themeBtn.addEventListener('click', function () {
     const isDark   = document.documentElement.getAttribute('data-theme') === 'dark';
     const newTheme = isDark ? 'light' : 'dark';
-
     document.documentElement.setAttribute('data-theme', newTheme);
-    themeToggleBtn.setAttribute('aria-checked', String(!isDark));
+    themeBtn.setAttribute('aria-checked', String(!isDark));
     themeIcon.textContent = isDark ? '🌙' : '☀️';
     localStorage.setItem('agecalc-theme', newTheme);
   });
 
-  /* ─────────────────────────────────────────
-     FOOTER YEAR
-  ───────────────────────────────────────── */
+  /* Footer year */
   document.getElementById('footer-year').textContent = new Date().getFullYear();
 
-  /* ─────────────────────────────────────────
-     ACCESSIBILITY: Allow Enter key on date
-     input to submit the form
-  ───────────────────────────────────────── */
-  document.getElementById('dob').addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') {
-      document.getElementById('age-form').dispatchEvent(new Event('submit'));
-    }
+  /* Enter key on date inputs submits form */
+  ['dob', 'asof'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', function (e) {
+      if (e.key === 'Enter')
+        document.getElementById('age-form').dispatchEvent(new Event('submit'));
+    });
   });
 </script>
 
