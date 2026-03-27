@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Calculate your exact age in years, months, and days. See your next birthday countdown instantly." />
+  <title>Age Calculator — Know Your Exact Age</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =========================================================
+       CSS CUSTOM PROPERTIES (Design Tokens)
+    ========================================================= */
+    :root {
+      --clr-bg:            #f0f4ff;
+      --clr-card:          #ffffff;
+      --clr-card-border:   rgba(99, 102, 241, 0.12);
+      --clr-text-primary:  #1e1b4b;
+      --clr-text-secondary:#6b7280;
+      --clr-accent:        #6366f1;
+      --clr-accent-dark:   #4f46e5;
+      --clr-accent-light:  #e0e7ff;
+      --clr-success:       #10b981;
+      --clr-error:         #ef4444;
+      --clr-error-bg:      #fef2f2;
+      --clr-result-bg:     #f8faff;
+      --clr-stat-bg:       #eff0ff;
+      --clr-stat-border:   rgba(99, 102, 241, 0.14);
+      --clr-countdown-bg:  linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      --clr-input-border:  #d1d5db;
+      --clr-input-focus:   #6366f1;
+      --clr-shadow:        rgba(99, 102, 241, 0.18);
+      --clr-toggle-bg:     #e5e7eb;
+      --radius-card:       1.5rem;
+      --radius-btn:        0.75rem;
+      --radius-input:      0.6rem;
+      --transition:        0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --font:              'Inter', system-ui, sans-serif;
+    }
+
+    /* ── Dark Mode Overrides ── */
+    [data-theme="dark"] {
+      --clr-bg:            #0f0e17;
+      --clr-card:          #1a1a2e;
+      --clr-card-border:   rgba(99, 102, 241, 0.25);
+      --clr-text-primary:  #e8e8f0;
+      --clr-text-secondary:#9ca3af;
+      --clr-accent:        #818cf8;
+      --clr-accent-dark:   #6366f1;
+      --clr-accent-light:  #1e1b4b;
+      --clr-result-bg:     #16162a;
+      --clr-stat-bg:       #1e1b4b;
+      --clr-stat-border:   rgba(129, 140, 248, 0.18);
+      --clr-input-border:  #374151;
+      --clr-toggle-bg:     #374151;
+      --clr-error-bg:      #2d1515;
+      --clr-shadow:        rgba(99, 102, 241, 0.3);
+    }
+
+    /* =========================================================
+       RESET & BASE
+    ========================================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font);
+      background-color: var(--clr-bg);
+      color: var(--clr-text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background-color var(--transition), color var(--transition);
+      padding: 1.5rem 1rem;
+    }
+
+    /* Soft background blobs for depth */
+    body::before,
+    body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.35;
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::before {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, #6366f1 0%, transparent 70%);
+      top: -150px;
+      right: -150px;
+    }
+    body::after {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, #8b5cf6 0%, transparent 70%);
+      bottom: -100px;
+      left: -100px;
+    }
+
+    /* =========================================================
+       LAYOUT WRAPPERS
+    ========================================================= */
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      flex: 1;
+    }
+
+    /* =========================================================
+       HEADER
+    ========================================================= */
+    header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.25rem 0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      background: var(--clr-countdown-bg);
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-size: 1.125rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
+    }
+
+    /* ── Dark Mode Toggle ── */
+    .theme-toggle {
+      background: var(--clr-toggle-bg);
+      border: none;
+      border-radius: 999px;
+      width: 52px;
+      height: 28px;
+      cursor: pointer;
+      position: relative;
+      transition: background-color var(--transition);
+      flex-shrink: 0;
+    }
+
+    .theme-toggle::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      top: 4px;
+      left: 4px;
+      transition: transform var(--transition), background-color var(--transition);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    }
+
+    [data-theme="dark"] .theme-toggle {
+      background: var(--clr-accent);
+    }
+
+    [data-theme="dark"] .theme-toggle::after {
+      transform: translateX(24px);
+      background: #1a1a2e;
+    }
+
+    .theme-toggle-label {
+      font-size: 0.72rem;
+      color: var(--clr-text-secondary);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* =========================================================
+       CARD
+    ========================================================= */
+    .card {
+      width: 100%;
+      background: var(--clr-card);
+      border: 1px solid var(--clr-card-border);
+      border-radius: var(--radius-card);
+      padding: 2.25rem 2rem;
+      box-shadow:
+        0 4px 6px -1px rgba(0,0,0,0.07),
+        0 20px 60px -10px var(--clr-shadow);
+      transition:
+        background-color var(--transition),
+        border-color var(--transition),
+        box-shadow var(--transition);
+    }
+
+    /* ── Card Hero heading ── */
+    .card-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 0.35rem;
+    }
+
+    .card-subtitle {
+      font-size: 0.875rem;
+      color: var(--clr-text-secondary);
+      font-weight: 400;
+      margin-bottom: 1.75rem;
+    }
+
+    /* =========================================================
+       FORM
+    ========================================================= */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: var(--clr-text-secondary);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    input[type="date"] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--clr-text-primary);
+      background: var(--clr-card);
+      border: 1.5px solid var(--clr-input-border);
+      border-radius: var(--radius-input);
+      outline: none;
+      transition:
+        border-color var(--transition),
+        box-shadow var(--transition),
+        background-color var(--transition);
+      cursor: pointer;
+      -webkit-appearance: none;
+    }
+
+    input[type="date"]:focus {
+      border-color: var(--clr-input-focus);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      opacity: 0.5;
+      cursor: pointer;
+      filter: var(--date-icon-filter, none);
+    }
+
+    [data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+    }
+
+    /* ── Calculate Button ── */
+    .btn-calculate {
+      width: 100%;
+      padding: 0.875rem 1.5rem;
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      border: none;
+      border-radius: var(--radius-btn);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition:
+        transform var(--transition),
+        box-shadow var(--transition),
+        opacity var(--transition);
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+      letter-spacing: 0.01em;
+    }
+
+    /* Button shimmer effect */
+    .btn-calculate::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,0.2),
+        transparent
+      );
+      transition: left 0.5s ease;
+    }
+
+    .btn-calculate:hover::before {
+      left: 100%;
+    }
+
+    .btn-calculate:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+    }
+
+    .btn-calculate:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 10px rgba(99, 102, 241, 0.35);
+    }
+
+    /* =========================================================
+       ERROR MESSAGE
+    ========================================================= */
+    .error-msg {
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--clr-error-bg);
+      color: var(--clr-error);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: var(--radius-input);
+      padding: 0.65rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-top: 0.75rem;
+      animation: slideDown 0.25s ease;
+    }
+
+    .error-msg.visible {
+      display: flex;
+    }
+
+    /* =========================================================
+       RESULT SECTION
+    ========================================================= */
+    .result-section {
+      display: none;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      /* Keyframe animation applied via JS */
+    }
+
+    .result-section.visible {
+      display: flex;
+      animation: fadeSlideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    /* ── Section label ── */
+    .result-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--clr-text-secondary);
+      margin-bottom: 0.1rem;
+    }
+
+    /* ── Age stats grid ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+
+    .stat-card {
+      background: var(--clr-stat-bg);
+      border: 1px solid var(--clr-stat-border);
+      border-radius: 1rem;
+      padding: 1rem 0.75rem;
+      text-align: center;
+      transition:
+        background-color var(--transition),
+        transform var(--transition);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--clr-accent);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      display: block;
+    }
+
+    .stat-unit {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--clr-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 0.3rem;
+      display: block;
+    }
+
+    /* ── Birthday Countdown Card ── */
+    .countdown-card {
+      background: var(--clr-countdown-bg);
+      border-radius: 1rem;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      color: #fff;
+    }
+
+    .countdown-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .countdown-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 600;
+      opacity: 0.8;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .countdown-headline {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .countdown-sub {
+      font-size: 0.8rem;
+      opacity: 0.75;
+      margin-top: 0.1rem;
+    }
+
+    .countdown-badge {
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(8px);
+      border-radius: 0.75rem;
+      padding: 0.6rem 1rem;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .countdown-days {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1;
+      display: block;
+    }
+
+    .countdown-days-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      opacity: 0.8;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── Birthday today special state ── */
+    .countdown-card.is-today {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    /* ── Divider ── */
+    .result-divider {
+      height: 1px;
+      background: var(--clr-card-border);
+      border: none;
+    }
+
+    /* =========================================================
+       FOOTER
+    ========================================================= */
+    footer {
+      margin-top: auto;
+      padding-top: 1.5rem;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--clr-text-secondary);
+      position: relative;
+      z-index: 1;
+    }
+
+    footer a {
+      color: var(--clr-accent);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* =========================================================
+       ANIMATIONS
+    ========================================================= */
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Staggered stat cards */
+    .stat-card:nth-child(1) { animation-delay: 0.05s; }
+    .stat-card:nth-child(2) { animation-delay: 0.12s; }
+    .stat-card:nth-child(3) { animation-delay: 0.19s; }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+    @media (max-width: 480px) {
+      .card {
+        padding: 1.75rem 1.25rem;
+        border-radius: 1.1rem;
+      }
+
+      .card-title {
+        font-size: 1.35rem;
+      }
+
+      .stat-value {
+        font-size: 1.6rem;
+      }
+
+      .countdown-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .countdown-badge {
+        width: 100%;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .countdown-days {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     PAGE WRAPPER
+══════════════════════════════════════════ -->
+<div class="page-wrapper">
+
+  <!-- ── Header ── -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon" aria-hidden="true">🎂</div>
+      <span class="logo-text">AgeCalc</span>
+    </div>
+    <label class="theme-toggle-label" for="theme-toggle" title="Toggle dark mode">
+      <span id="theme-icon">🌙</span>
+      <button
+        class="theme-toggle"
+        id="theme-toggle"
+        role="switch"
+        aria-label="Toggle dark mode"
+        aria-checked="false"
+      ></button>
+    </label>
+  </header>
+
+  <!-- ── Main Card ── -->
+  <main>
+    <div class="card" role="main">
+      <h1 class="card-title">How old are you, <em>exactly?</em></h1>
+      <p class="card-subtitle">Enter your date of birth to find out your precise age and next birthday.</p>
+
+      <!-- Form -->
+      <form id="age-form" novalidate>
+        <div class="form-group">
+          <label for="dob">Date of Birth</label>
+          <input
+            type="date"
+            id="dob"
+            name="dob"
+            aria-label="Date of Birth"
+            aria-required="true"
+          />
+        </div>
+
+        <!-- Error message -->
+        <div class="error-msg" id="error-msg" role="alert" aria-live="polite">
+          <span aria-hidden="true">⚠️</span>
+          <span id="error-text">Please select a valid date of birth.</span>
+        </div>
+
+        <button
+          type="submit"
+          class="btn-calculate"
+          id="btn-calculate"
+          aria-label="Calculate my age"
+        >
+          Calculate Age ✨
+        </button>
+      </form>
+
+      <!-- ── Result Section ── -->
+      <section
+        class="result-section"
+        id="result-section"
+        aria-live="polite"
+        aria-label="Age calculation results"
+      >
+        <hr class="result-divider" />
+
+        <!-- Age breakdown -->
+        <p class="result-label">Your Age</p>
+        <div class="stats-grid" id="stats-grid">
+          <div class="stat-card">
+            <span class="stat-value" id="years-val">0</span>
+            <span class="stat-unit">Years</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="months-val">0</span>
+            <span class="stat-unit">Months</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="days-val">0</span>
+            <span class="stat-unit">Days</span>
+          </div>
+        </div>
+
+        <!-- Birthday countdown -->
+        <div class="countdown-card" id="countdown-card">
+          <div class="countdown-left">
+            <span class="countdown-eyebrow">Next Birthday</span>
+            <span class="countdown-headline" id="countdown-headline">Mar 27, 2027</span>
+            <span class="countdown-sub" id="countdown-sub">You'll be turning 26</span>
+          </div>
+          <div class="countdown-badge">
+            <span class="countdown-days" id="countdown-days">—</span>
+            <span class="countdown-days-label" id="countdown-days-label">days away</span>
+          </div>
+        </div>
+
+      </section>
+      <!-- /result-section -->
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <p>Built with ❤️ using plain HTML, CSS &amp; JS &nbsp;·&nbsp; &copy; <span id="footer-year"></span> AgeCalc</p>
+  </footer>
+
+</div>
+<!-- /page-wrapper -->
+
+
+<!-- ══════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════ -->
+<script>
+  /* ─────────────────────────────────────────
+     UTILITY: Get today's date at midnight
+  ───────────────────────────────────────── */
+  function today() {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+
+  /* ─────────────────────────────────────────
+     UTILITY: Format a Date as "MMM DD, YYYY"
+  ───────────────────────────────────────── */
+  function formatDate(date) {
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  }
+
+  /* ─────────────────────────────────────────
+     AGE CALCULATION
+     Returns { years, months, days } accurately
+     using calendar arithmetic.
+  ───────────────────────────────────────── */
+  function calcAge(dobDate) {
+    const now = today();
+    let years  = now.getFullYear() - dobDate.getFullYear();
+    let months = now.getMonth()    - dobDate.getMonth();
+    let days   = now.getDate()     - dobDate.getDate();
+
+    // Borrow from months if days are negative
+    if (days < 0) {
+      months--;
+      // Days in the previous month relative to today
+      const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+      days += prevMonth.getDate();
+    }
+
+    // Borrow from years if months are negative
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+
+    return { years, months, days };
+  }
+
+  /* ─────────────────────────────────────────
+     BIRTHDAY COUNTDOWN
+     Returns { daysLeft, nextBirthday, turningAge }
+  ───────────────────────────────────────── */
+  function calcCountdown(dobDate) {
+    const now  = today();
+    const thisYear = now.getFullYear();
+
+    // Next birthday this year
+    let nextBD = new Date(thisYear, dobDate.getMonth(), dobDate.getDate());
+
+    // If birthday already passed this year, look at next year
+    if (nextBD < now) {
+      nextBD = new Date(thisYear + 1, dobDate.getMonth(), dobDate.getDate());
+    }
+
+    // Days remaining
+    const msPerDay = 24 * 60 * 60 * 1000;
+    const daysLeft = Math.round((nextBD - now) / msPerDay);
+
+    // Age they'll be turning
+    const turningAge = nextBD.getFullYear() - dobDate.getFullYear();
+
+    return { daysLeft, nextBirthday: nextBD, turningAge };
+  }
+
+  /* ─────────────────────────────────────────
+     SHOW ERROR
+  ───────────────────────────────────────── */
+  function showError(msg) {
+    const el    = document.getElementById('error-msg');
+    const elTxt = document.getElementById('error-text');
+    elTxt.textContent = msg;
+    el.classList.add('visible');
+  }
+
+  /* ─────────────────────────────────────────
+     HIDE ERROR
+  ───────────────────────────────────────── */
+  function hideError() {
+    document.getElementById('error-msg').classList.remove('visible');
+  }
+
+  /* ─────────────────────────────────────────
+     ANIMATE COUNT-UP for stat values
+  ───────────────────────────────────────── */
+  function animateCount(el, target, duration = 600) {
+    const start    = performance.now();
+    const from     = 0;
+
+    function step(timestamp) {
+      const elapsed  = timestamp - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease out cubic
+      const eased    = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(from + (target - from) * eased);
+      if (progress < 1) requestAnimationFrame(step);
+    }
+
+    requestAnimationFrame(step);
+  }
+
+  /* ─────────────────────────────────────────
+     RENDER RESULTS
+  ───────────────────────────────────────── */
+  function renderResults(dobDate) {
+    const { years, months, days }           = calcAge(dobDate);
+    const { daysLeft, nextBirthday, turningAge } = calcCountdown(dobDate);
+
+    // ── Show result section with animation reset ──
+    const section = document.getElementById('result-section');
+    section.classList.remove('visible');
+    // Force reflow to re-trigger animation
+    void section.offsetWidth;
+    section.classList.add('visible');
+
+    // ── Animate stat counters ──
+    animateCount(document.getElementById('years-val'),  years,  700);
+    animateCount(document.getElementById('months-val'), months, 550);
+    animateCount(document.getElementById('days-val'),   days,   400);
+
+    // ── Countdown card ──
+    const countdownCard  = document.getElementById('countdown-card');
+    const headlineEl     = document.getElementById('countdown-headline');
+    const subEl          = document.getElementById('countdown-sub');
+    const daysEl         = document.getElementById('countdown-days');
+    const daysLabelEl    = document.getElementById('countdown-days-label');
+
+    if (daysLeft === 0) {
+      // 🎉 Birthday today!
+      countdownCard.classList.add('is-today');
+      headlineEl.textContent    = '🎉 Happy Birthday!';
+      subEl.textContent         = `You are turning ${turningAge} today!`;
+      daysEl.textContent        = '🎂';
+      daysLabelEl.textContent   = 'Today!';
+    } else {
+      countdownCard.classList.remove('is-today');
+      headlineEl.textContent    = formatDate(nextBirthday);
+      subEl.textContent         = `You'll be turning ${turningAge}`;
+      daysLabelEl.textContent   = 'days away';
+      animateCount(daysEl, daysLeft, 800);
+    }
+  }
+
+  /* ─────────────────────────────────────────
+     FORM SUBMIT HANDLER
+  ───────────────────────────────────────── */
+  document.getElementById('age-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    hideError();
+
+    const dobInput = document.getElementById('dob');
+    const rawValue = dobInput.value; // "YYYY-MM-DD"
+
+    // ── Validation 1: Empty input ──
+    if (!rawValue) {
+      showError('Please select your date of birth to continue.');
+      return;
+    }
+
+    // Parse date parts manually to avoid timezone shift issues
+    const [yyyy, mm, dd] = rawValue.split('-').map(Number);
+    const dobDate = new Date(yyyy, mm - 1, dd); // month is 0-indexed
+    dobDate.setHours(0, 0, 0, 0);
+
+    // ── Validation 2: Future date ──
+    if (dobDate > today()) {
+      showError('Date of birth cannot be in the future. Please check and try again.');
+      return;
+    }
+
+    // ── Validation 3: Unrealistically old (> 130 years) ──
+    const maxAge = 130;
+    const minDate = new Date(today().getFullYear() - maxAge, today().getMonth(), today().getDate());
+    if (dobDate < minDate) {
+      showError(`Please enter a date after ${formatDate(minDate)}.`);
+      return;
+    }
+
+    // All good — render results
+    renderResults(dobDate);
+  });
+
+  /* ─────────────────────────────────────────
+     DARK MODE TOGGLE
+  ───────────────────────────────────────── */
+  const themeToggleBtn = document.getElementById('theme-toggle');
+  const themeIcon      = document.getElementById('theme-icon');
+
+  // Load saved preference
+  (function initTheme() {
+    const savedTheme = localStorage.getItem('agecalc-theme');
+    if (savedTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      themeToggleBtn.setAttribute('aria-checked', 'true');
+      themeIcon.textContent = '☀️';
+    }
+  })();
+
+  themeToggleBtn.addEventListener('click', function () {
+    const isDark   = document.documentElement.getAttribute('data-theme') === 'dark';
+    const newTheme = isDark ? 'light' : 'dark';
+
+    document.documentElement.setAttribute('data-theme', newTheme);
+    themeToggleBtn.setAttribute('aria-checked', String(!isDark));
+    themeIcon.textContent = isDark ? '🌙' : '☀️';
+    localStorage.setItem('agecalc-theme', newTheme);
+  });
+
+  /* ─────────────────────────────────────────
+     FOOTER YEAR
+  ───────────────────────────────────────── */
+  document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+  /* ─────────────────────────────────────────
+     ACCESSIBILITY: Allow Enter key on date
+     input to submit the form
+  ───────────────────────────────────────── */
+  document.getElementById('dob').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      document.getElementById('age-form').dispatchEvent(new Event('submit'));
+    }
+  });
+</script>
+
+</body>
+</html>
