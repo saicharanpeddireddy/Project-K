@@ -249,16 +249,15 @@
     /* ================================================================
        CUSTOM DATE SELECTOR
        Three fields (Month ▾ | Day ▾ | Year) displayed side-by-side.
-       Border colour matches spec: #1a4a8e
     ================================================================ */
     .date-selector {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       width: 100%;
     }
 
-    /* Shared base for all three controls */
+    /* ── Shared base for all three controls ── */
     .ds-select,
     .ds-year {
       font-family: var(--font);
@@ -266,64 +265,106 @@
       color: var(--clr-text);
       background: var(--clr-input-bg);
       border: 1px solid var(--clr-input-border);
-      border-radius: 3px;
+      border-radius: 4px;
       padding: 7px 8px;
       outline: none;
       appearance: none;
       -webkit-appearance: none;
       cursor: pointer;
+      width: 100%;
       transition: border-color var(--t), box-shadow var(--t),
                   background var(--t), color var(--t);
-      box-shadow: 1px 1px 2px rgba(0,0,0,.25);
+      box-shadow: 1px 1px 2px rgba(0,0,0,.2);
     }
+
+    /* Focus handled on the wrapper instead (see JS) */
     .ds-select:focus,
     .ds-year:focus {
-      border-color: #003366;
-      box-shadow: 1px 1px 3px #336699, 0 0 0 3px rgba(0,51,102,.1);
+      outline: none;
     }
+
     [data-theme="dark"] .ds-select,
     [data-theme="dark"] .ds-year {
       border-color: #336699;
-      background: var(--clr-input-bg);
-      color: var(--clr-text);
+      box-shadow: 1px 1px 2px rgba(0,0,0,.5);
     }
 
-    /* ── Select wrapper — positions the CSS-only chevron arrow ── */
+    /* ── Wrapper — hosts the ▾ arrow and focus/hover ring ── */
     .ds-wrap {
       position: relative;
       display: inline-flex;
       align-items: center;
       flex: 0 0 auto;
+      border-radius: 4px;
+      transition: box-shadow var(--t);
     }
+
+    /* Hover glow */
+    .ds-wrap:hover .ds-select {
+      border-color: var(--clr-blue);
+    }
+
+    /* Focus ring on wrapper (toggled by JS) */
+    .ds-wrap.focused .ds-select {
+      border-color: var(--clr-navy);
+      box-shadow: 1px 1px 3px var(--clr-blue), 0 0 0 3px rgba(0,51,102,.15);
+    }
+    [data-theme="dark"] .ds-wrap.focused .ds-select {
+      border-color: #7ab3e0;
+      box-shadow: 0 0 0 3px rgba(51,102,153,.35);
+    }
+
+    /* Same focus treatment for year (no wrapper needed, direct) */
+    .ds-year:focus {
+      border-color: var(--clr-navy);
+      box-shadow: 1px 1px 3px var(--clr-blue), 0 0 0 3px rgba(0,51,102,.15);
+    }
+    [data-theme="dark"] .ds-year:focus {
+      border-color: #7ab3e0;
+      box-shadow: 0 0 0 3px rgba(51,102,153,.35);
+    }
+    .ds-wrap:hover .ds-year {
+      border-color: var(--clr-blue);
+    }
+
+    /* ▾ Arrow */
     .ds-wrap::after {
       content: '▾';
       position: absolute;
-      right: 8px;
+      right: 7px;
       top: 50%;
-      transform: translateY(-50%);
+      transform: translateY(-50%) rotate(0deg);
       pointer-events: none;
       font-size: 11px;
       color: var(--clr-input-border);
       line-height: 1;
-      transition: color var(--t);
+      transition: transform 0.18s ease, color var(--t);
+    }
+
+    /* Rotate arrow when select is open / wrapper is focused */
+    .ds-wrap.open::after {
+      transform: translateY(-50%) rotate(180deg);
+    }
+    [data-theme="dark"] .ds-wrap::after {
+      color: #7ab3e0;
     }
 
     /* Month — wide enough for 3-char names */
     .ds-month {
       width: 105px;
-      padding-right: 22px; /* room for ▾ */
+      padding-right: 22px;
     }
 
     /* Day — compact */
     .ds-day {
-      width: 78px;
-      padding-right: 22px; /* room for ▾ */
+      width: 76px;
+      padding-right: 22px;
     }
 
     /* Year — number input, no spinner arrows */
     .ds-year {
       flex: 1 1 0;
-      min-width: 70px;
+      min-width: 68px;
       cursor: text;
       text-align: center;
     }
@@ -571,8 +612,7 @@
   <!-- ── Header ── -->
   <header>
     <div class="logo">
-      <div class="logo-icon" aria-hidden="true">🎂</div>
-      <span class="logo-text">AgeCalc</span>
+      <span class="logo-text">Age Calculator</span>
     </div>
     <div class="toggle-wrap">
       <span id="theme-icon">🌙</span>
@@ -796,7 +836,7 @@ function parseDate(str) {
 
 /** Format a Date → "MMM D, YYYY" */
 function fmtDate(d) {
-  return d.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
+  return d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
 }
 
 /** Hex → RGBA helper for CSS */
@@ -816,7 +856,7 @@ const ZODIAC = [
   {
     symbol: '♑', name: 'Capricorn',  dates: 'Dec 22 – Jan 19',
     start: [12,22], end: [1,19],
-    colour: '#2c3e50', light: '#d5d8dc',
+    colour: '#3f51b5', light: '#c5cae9',
     desc: 'Ambitious and disciplined, Capricorns are the natural strategists of the zodiac — patient, resourceful, and driven by long-term success.',
     traits: ['Ambitious','Disciplined','Patient','Responsible','Practical']
   },
@@ -1257,11 +1297,11 @@ function updateDayDropdown(prefix) {
   const now = todayDate();
   const todayBadge = document.getElementById('today-badge');
 
-  /* ── DOB: default to Jan 1 of a neutral past year ── */
-  document.getElementById('dob-month').value = 1;
-  document.getElementById('dob-year').value  = 1990;
+  /* ── DOB: default to today ── */
+  document.getElementById('dob-month').value = now.getMonth() + 1;
+  document.getElementById('dob-year').value  = now.getFullYear();
   updateDayDropdown('dob');
-  document.getElementById('dob-day').value   = 1;
+  document.getElementById('dob-day').value   = now.getDate();
 
   /* ── As-of: default to today ── */
   document.getElementById('asof-month').value = now.getMonth() + 1;
