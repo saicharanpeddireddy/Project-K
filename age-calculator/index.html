@@ -11,63 +11,78 @@
        DESIGN TOKENS
        Base palette: #003366 navy · #518428 green · #336699 blue
        Font: Arial / Helvetica (from reference CSS)
-       Zodiac accent colour is injected via JS on --zodiac-accent
+    /* ================================================================
+       1. CSS VARIABLES
+       Grid: 8pt
+       Border Radius: 12px
+       Glass: translucent rgba backgrounds + backdrop-filter
     ================================================================ */
     :root {
-      --font:             arial, helvetica, sans-serif;
-      --clr-navy:         #003366;
-      --clr-blue:         #336699;
-      --clr-green:        #518428;
-      --clr-green-dark:   #417516;
+      --font:             'Inter', arial, helvetica, sans-serif;
+      /* Core spacing - 8pt system */
+      --sp-1: 8px;
+      --sp-2: 16px;
+      --sp-3: 24px;
+      --sp-4: 32px;
+      --sp-5: 40px;
 
-      /* Surfaces */
-      --clr-bg:           #eef2f7;
-      --clr-card:         #ffffff;
-      --clr-card-border:  rgba(0,51,102,.13);
-      --clr-stat-bg:      #d1dde9;
-      --clr-stat-border:  rgba(0,51,102,.18);
-      --clr-error-bg:     #ffcccc;
-      --clr-error-border: #ffaaaa;
+      /* Primary Colors */
+      --clr-navy:         #0f172a;
+      --clr-blue:         #3b82f6;
+      --clr-neon:         #00ff9d; /* Vibrant accent */
+      --clr-green:        #10b981;
+
+      /* Surfaces (Light Mode) */
+      --clr-bg:           #f8fafc;
+      /* Glass effect */
+      --clr-card:         rgba(255, 255, 255, 0.6);
+      --clr-card-border:  rgba(255, 255, 255, 0.4);
+      --clr-stat-bg:      rgba(255, 255, 255, 0.4);
+      --clr-stat-border:  rgba(255, 255, 255, 0.8);
+      --clr-error-bg:     #fee2e2;
+      --clr-error-border: #fca5a5;
 
       /* Text */
-      --clr-text:         #000;
-      --clr-muted:        #555;
-      --clr-heading:      #003366;
-      --clr-link:         #336699;
+      --clr-text:         #1e293b;
+      --clr-muted:        #64748b;
+      --clr-heading:      #0f172a;
+      --clr-link:         #3b82f6;
 
-      /* Input (reference CSS) */
-      --clr-input-border: #044284;
-      --clr-input-bg:     #fff;
+      /* Inputs */
+      --clr-input-border: rgba(15, 23, 42, 0.1);
+      --clr-input-bg:     rgba(255, 255, 255, 0.7);
 
-      /* Dynamic zodiac accent – updated by JS */
-      --zodiac-accent:    #336699;
-      --zodiac-light:     #d1dde9;
+      /* Dynamic zodiac */
+      --zodiac-accent:    #3b82f6;
+      --zodiac-light:     #e2e8f0;
 
-      /* Card shadow */
-      --shadow:           rgba(0,51,102,.18);
-
-      /* Radii / transitions */
-      --r-card:    1.25rem;
-      --r-sm:      4px;
-      --t:         0.22s cubic-bezier(.4,0,.2,1);
+      /* Radii & Shadows */
+      --r-card:    12px;
+      --r-sm:      8px;
+      --shadow:    0 8px 32px -4px rgba(15, 23, 42, 0.1);
+      --glass-blur: blur(12px);
+      --t:         0.25s cubic-bezier(.4,0,.2,1);
     }
 
     /* ── Dark Mode ── */
     [data-theme="dark"] {
-      --clr-bg:           #0c1522;
-      --clr-card:         #112033;
-      --clr-card-border:  rgba(51,102,153,.35);
-      --clr-stat-bg:      #192e44;
-      --clr-stat-border:  rgba(51,102,153,.3);
-      --clr-error-bg:     #2d0f0f;
-      --clr-error-border: #7a2020;
-      --clr-text:         #e4eaf5;
-      --clr-muted:        #8fa3bb;
-      --clr-heading:      #7ab3e0;
-      --clr-link:         #7ab3e0;
-      --clr-input-border: #336699;
-      --clr-input-bg:     #0c1522;
-      --shadow:           rgba(0,30,70,.5);
+      --clr-bg:           #020617;
+      --clr-card:         rgba(15, 23, 42, 0.5);
+      --clr-card-border:  rgba(255, 255, 255, 0.1);
+      --clr-stat-bg:      rgba(15, 23, 42, 0.4);
+      --clr-stat-border:  rgba(255, 255, 255, 0.05);
+      --clr-error-bg:     rgba(127, 29, 29, 0.3);
+      --clr-error-border: #991b1b;
+      
+      --clr-text:         #f8fafc;
+      --clr-muted:        #94a3b8;
+      --clr-heading:      #ffffff;
+      --clr-link:         #38bdf8;
+      
+      --clr-input-border: rgba(255, 255, 255, 0.15);
+      --clr-input-bg:     rgba(15, 23, 42, 0.6);
+      
+      --shadow:           0 8px 32px -4px rgba(0, 0, 0, 0.5);
     }
 
     /* ================================================================
@@ -198,10 +213,12 @@
     .card {
       width: 100%;
       background: var(--clr-card);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
       border: 1px solid var(--clr-card-border);
       border-radius: var(--r-card);
-      padding: 1.9rem 1.75rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,.07), 0 16px 50px -10px var(--shadow);
+      padding: 2rem 2.2rem;
+      box-shadow: var(--shadow);
       transition: background var(--t), border-color var(--t), box-shadow var(--t);
     }
 
@@ -265,8 +282,9 @@
       color: var(--clr-text);
       background: var(--clr-input-bg);
       border: 1px solid var(--clr-input-border);
-      border-radius: 4px;
-      padding: 7px 8px;
+      border-radius: var(--r-sm);
+      min-height: 44px; /* Touch target */
+      padding: 7px 12px;
       outline: none;
       appearance: none;
       -webkit-appearance: none;
@@ -433,19 +451,28 @@
 
     .stat-card {
       background: var(--clr-stat-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
       border: 1px solid var(--clr-stat-border);
-      border-radius: 6px; padding: .85rem .5rem;
+      border-radius: 12px; padding: 1.25rem .5rem;
       text-align: center;
-      box-shadow: 1px 1px 2px rgba(0,51,102,.08);
+      box-shadow: 1px 1px 2px rgba(0,0,0,.08);
       transition: background var(--t), transform var(--t);
     }
     .stat-card:hover { transform: translateY(-3px); }
 
     .stat-value {
-      font-size: 2rem; font-weight: bold;
+      font-size: 3.2rem; /* Hero numbers */
+      font-weight: 800;
       color: var(--zodiac-accent);
       line-height: 1; display: block;
-      transition: color var(--t);
+      margin-bottom: 4px;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: color var(--t), text-shadow var(--t);
+    }
+    [data-theme="dark"] .stat-value {
+      color: var(--clr-neon);
+      text-shadow: 0 0 15px rgba(0,255,157,0.3);
     }
     .stat-unit {
       font-size: 11px; font-weight: bold; color: var(--clr-muted);
@@ -468,17 +495,24 @@
        ZODIAC CARD
     ───────────────────────────────────── */
     .zodiac-card {
-      border: 1px solid var(--zodiac-accent);
-      border-radius: 6px; overflow: hidden;
+      border: 1px solid var(--clr-stat-border);
+      background: var(--clr-stat-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border-radius: 12px; overflow: hidden;
       transition: border-color var(--t);
     }
 
     .zodiac-header {
-      background: var(--zodiac-accent);
-      color: #fff;
-      padding: .7rem 1rem;
-      display: flex; align-items: center; gap: .75rem;
+      background: rgba(0,0,0,0.05);
+      border-bottom: 1px solid var(--clr-stat-border);
+      color: var(--clr-text);
+      padding: .85rem 1rem;
+      display: flex; align-items: center; gap: .85rem;
       transition: background var(--t);
+    }
+    [data-theme="dark"] .zodiac-header {
+      background: rgba(255,255,255,0.05);
     }
 
     .zodiac-symbol {
@@ -644,7 +678,7 @@
         <!-- ── As of Date selector ── -->
         <div class="form-group" style="margin-bottom:1rem">
           <label>
-            As of Date
+            Today's Date
             <span class="today-badge" id="today-badge">Today</span>
           </label>
           <div class="date-selector" id="asof-selector" aria-label="As of Date">
@@ -687,8 +721,8 @@
         </div>
 
         <button type="submit" class="btn-calculate" id="btn-calculate"
-          aria-label="Calculate my age">
-          Calculate Age
+          aria-label="Reveal My Stats">
+          Reveal My Stats
         </button>
       </form>
 
@@ -709,16 +743,56 @@
         <p class="result-label">Your Age</p>
         <div class="stats-grid">
           <div class="stat-card">
-            <span class="stat-value" id="years-val">0</span>
+            <span class="stat-value" id="years-val">--</span>
             <span class="stat-unit">Years</span>
           </div>
           <div class="stat-card">
-            <span class="stat-value" id="months-val">0</span>
+            <span class="stat-value" id="months-val">--</span>
             <span class="stat-unit">Months</span>
           </div>
           <div class="stat-card">
-            <span class="stat-value" id="days-val">0</span>
+            <span class="stat-value" id="days-val">--</span>
             <span class="stat-unit">Days</span>
+          </div>
+        </div>
+
+        <!-- ── Life Stats ── -->
+        <p class="result-label" style="margin-top: 1.25rem;">Estimated Lifetime Stats</p>
+        <div class="stats-grid">
+          <div class="stat-card" style="grid-column: span 1.5;">
+            <span class="stat-value" id="heart-val" style="font-size: 2.2rem; color: #f43f5e;">--</span>
+            <span class="stat-unit">Heartbeats (Avg)</span>
+          </div>
+          <div class="stat-card" style="grid-column: span 1.5;">
+            <span class="stat-value" id="breath-val" style="font-size: 2.2rem; color: #0ea5e9;">--</span>
+            <span class="stat-unit">Breaths (Avg)</span>
+          </div>
+        </div>
+
+        <!-- ── Space Age ── -->
+        <p class="result-label" style="margin-top: 1.25rem;">Your Age in Space</p>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-value" id="mars-val" style="font-size: 2rem; color: #f97316;">--</span>
+            <span class="stat-unit">Years on Mars</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="venus-val" style="font-size: 2rem; color: #eab308;">--</span>
+            <span class="stat-unit">Years on Venus</span>
+          </div>
+        </div>
+
+        <!-- ── Time Machine ── -->
+        <p class="result-label" style="margin-top: 1.25rem;">Nostalgia Time Machine</p>
+        <div class="zodiac-card" style="margin-bottom: 0;">
+          <div class="zodiac-header" style="background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.3);">
+            <span class="zodiac-symbol">🕰️</span>
+            <div class="zodiac-name-wrap">
+              <span class="zodiac-name" style="color: #8b5cf6;">Back in <span id="tm-year"></span>...</span>
+            </div>
+          </div>
+          <div class="zodiac-body">
+            <span id="tm-fact">—</span>
           </div>
         </div>
 
@@ -740,7 +814,7 @@
         <!-- ── Birthday countdown ── -->
         <div class="countdown-card" id="countdown-card">
           <div class="countdown-left">
-            <span class="countdown-eyebrow">Next Birthday</span>
+            <span class="countdown-eyebrow">Your Next Celebration</span>
             <span class="countdown-headline" id="countdown-headline">—</span>
             <span class="countdown-sub" id="countdown-sub">—</span>
           </div>
@@ -990,7 +1064,12 @@ function animateCount(el, target, ms = 600) {
   (function tick(now) {
     const p = Math.min((now - t0) / ms, 1);
     const e = 1 - Math.pow(1 - p, 3);
-    el.textContent = Math.round(target * e);
+    const val = target * e;
+    if (Number.isInteger(target) || Math.abs(target) > 1000) {
+      el.textContent = Math.round(val).toLocaleString('en-US');
+    } else {
+      el.textContent = val.toFixed(1);
+    }
     if (p < 1) requestAnimationFrame(tick);
   })(performance.now());
 }
@@ -1040,6 +1119,38 @@ function renderResults(dob, asof) {
   animateCount(document.getElementById('years-val'),  years,  700);
   animateCount(document.getElementById('months-val'), months, 550);
   animateCount(document.getElementById('days-val'),   days,   400);
+
+  /* ── Life Stats ── */
+  const totalDays = Math.floor((asof - dob) / (1000 * 60 * 60 * 24));
+  const totalMinutes = Math.max(0, totalDays * 24 * 60);
+  
+  const heartbeats = totalMinutes * 80;
+  const breaths = totalMinutes * 16;
+  animateCount(document.getElementById('heart-val'), heartbeats, 900);
+  animateCount(document.getElementById('breath-val'), breaths,   900);
+
+  /* ── Space Age ── */
+  // Uses total Earth years = totalDays / 365.25
+  const earthYears = totalDays / 365.25;
+  const marsYears = (earthYears / 1.88).toFixed(1);
+  const venusYears = (earthYears / 0.615).toFixed(1);
+  animateCount(document.getElementById('mars-val'), parseFloat(marsYears) || 0, 800);
+  animateCount(document.getElementById('venus-val'), parseFloat(venusYears) || 0, 800);
+
+  /* ── Time Machine ── */
+  const birthY = dob.getFullYear();
+  document.getElementById('tm-year').textContent = birthY;
+  
+  let fact = "You are witnessing the age of true AI integration!";
+  if (birthY < 1960) fact = "You were born before humans walked on the moon! 🚀";
+  else if (birthY >= 1960 && birthY <= 1969) fact = "The Beatles were dominating the charts, and the space race was peaking! 🎸";
+  else if (birthY >= 1970 && birthY <= 1979) fact = "Star Wars hit theaters, and disco ruled the dance floor! 🕺";
+  else if (birthY >= 1980 && birthY <= 1989) fact = "The World Wide Web (Internet) was just being invented! 🌐";
+  else if (birthY >= 1990 && birthY <= 1999) fact = "The '90s! Titanic was huge, and the first flip phones arrived! 📱";
+  else if (birthY >= 2000 && birthY <= 2009) fact = "Smartphones were just starting to take over the world! 🌍";
+  else if (birthY >= 2010 && birthY <= 2019) fact = "Social media, modern streaming platforms, and memes changed everything! 🎥";
+  
+  document.getElementById('tm-fact').textContent = fact;
 
   /* ── Birthday countdown ── */
   const { daysLeft, nextBirthday, turningAge } = calcCountdown(dob, asof);
