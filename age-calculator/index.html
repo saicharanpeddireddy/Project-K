@@ -265,8 +265,8 @@
       font-size: 15px;
       color: var(--clr-text);
       background: var(--clr-input-bg);
-      border: 1.5px solid #1a4a8e;
-      border-radius: 5px;
+      border: 1px solid var(--clr-input-border);
+      border-radius: 3px;
       padding: 7px 8px;
       outline: none;
       appearance: none;
@@ -274,12 +274,12 @@
       cursor: pointer;
       transition: border-color var(--t), box-shadow var(--t),
                   background var(--t), color var(--t);
-      box-shadow: 0 1px 3px rgba(26,74,142,.15);
+      box-shadow: 1px 1px 2px rgba(0,0,0,.25);
     }
     .ds-select:focus,
     .ds-year:focus {
       border-color: #003366;
-      box-shadow: 0 0 0 3px rgba(26,74,142,.18);
+      box-shadow: 1px 1px 3px #336699, 0 0 0 3px rgba(0,51,102,.1);
     }
     [data-theme="dark"] .ds-select,
     [data-theme="dark"] .ds-year {
@@ -288,30 +288,36 @@
       color: var(--clr-text);
     }
 
-    /* Month — widest to fit full abbreviated names + chevron */
-    .ds-month {
+    /* ── Select wrapper — positions the CSS-only chevron arrow ── */
+    .ds-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
       flex: 0 0 auto;
-      width: 108px;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6"><path d="M0 0L5 6L10 0Z" fill="%231a4a8e"/></svg>');
-      background-repeat: no-repeat;
-      background-position: right 8px center;
-      padding-right: 26px;
     }
-    [data-theme="dark"] .ds-month {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6"><path d="M0 0L5 6L10 0Z" fill="%237ab3e0"/></svg>');
+    .ds-wrap::after {
+      content: '▾';
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      font-size: 11px;
+      color: var(--clr-input-border);
+      line-height: 1;
+      transition: color var(--t);
+    }
+
+    /* Month — wide enough for 3-char names */
+    .ds-month {
+      width: 105px;
+      padding-right: 22px; /* room for ▾ */
     }
 
     /* Day — compact */
     .ds-day {
-      flex: 0 0 auto;
-      width: 82px;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6"><path d="M0 0L5 6L10 0Z" fill="%231a4a8e"/></svg>');
-      background-repeat: no-repeat;
-      background-position: right 8px center;
-      padding-right: 24px;
-    }
-    [data-theme="dark"] .ds-day {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6"><path d="M0 0L5 6L10 0Z" fill="%237ab3e0"/></svg>');
+      width: 78px;
+      padding-right: 22px; /* room for ▾ */
     }
 
     /* Year — number input, no spinner arrows */
@@ -590,23 +596,27 @@
           <div class="date-selector" id="dob-selector" aria-label="Date of Birth">
 
             <!-- Month -->
-            <select class="ds-select ds-month" id="dob-month" aria-label="Birth month">
-              <option value="1">Jan</option>
-              <option value="2">Feb</option>
-              <option value="3">Mar</option>
-              <option value="4">Apr</option>
-              <option value="5">May</option>
-              <option value="6">Jun</option>
-              <option value="7">Jul</option>
-              <option value="8">Aug</option>
-              <option value="9">Sep</option>
-              <option value="10">Oct</option>
-              <option value="11">Nov</option>
-              <option value="12">Dec</option>
-            </select>
+            <div class="ds-wrap">
+              <select class="ds-select ds-month" id="dob-month" aria-label="Birth month">
+                <option value="1">Jan</option>
+                <option value="2">Feb</option>
+                <option value="3">Mar</option>
+                <option value="4">Apr</option>
+                <option value="5">May</option>
+                <option value="6">Jun</option>
+                <option value="7">Jul</option>
+                <option value="8">Aug</option>
+                <option value="9">Sep</option>
+                <option value="10">Oct</option>
+                <option value="11">Nov</option>
+                <option value="12">Dec</option>
+              </select>
+            </div>
 
             <!-- Day -->
-            <select class="ds-select ds-day" id="dob-day" aria-label="Birth day"></select>
+            <div class="ds-wrap">
+              <select class="ds-select ds-day" id="dob-day" aria-label="Birth day"></select>
+            </div>
 
             <!-- Year -->
             <input type="number" class="ds-year" id="dob-year"
@@ -625,23 +635,27 @@
           <div class="date-selector" id="asof-selector" aria-label="As of Date">
 
             <!-- Month -->
-            <select class="ds-select ds-month" id="asof-month" aria-label="As-of month">
-              <option value="1">Jan</option>
-              <option value="2">Feb</option>
-              <option value="3">Mar</option>
-              <option value="4">Apr</option>
-              <option value="5">May</option>
-              <option value="6">Jun</option>
-              <option value="7">Jul</option>
-              <option value="8">Aug</option>
-              <option value="9">Sep</option>
-              <option value="10">Oct</option>
-              <option value="11">Nov</option>
-              <option value="12">Dec</option>
-            </select>
+            <div class="ds-wrap">
+              <select class="ds-select ds-month" id="asof-month" aria-label="As-of month">
+                <option value="1">Jan</option>
+                <option value="2">Feb</option>
+                <option value="3">Mar</option>
+                <option value="4">Apr</option>
+                <option value="5">May</option>
+                <option value="6">Jun</option>
+                <option value="7">Jul</option>
+                <option value="8">Aug</option>
+                <option value="9">Sep</option>
+                <option value="10">Oct</option>
+                <option value="11">Nov</option>
+                <option value="12">Dec</option>
+              </select>
+            </div>
 
             <!-- Day -->
-            <select class="ds-select ds-day" id="asof-day" aria-label="As-of day"></select>
+            <div class="ds-wrap">
+              <select class="ds-select ds-day" id="asof-day" aria-label="As-of day"></select>
+            </div>
 
             <!-- Year -->
             <input type="number" class="ds-year" id="asof-year"
