@@ -246,28 +246,84 @@
       text-transform: uppercase; letter-spacing: .04em;
     }
 
-    /* Date inputs — reference CSS style */
-    input[type="date"] {
+    /* ================================================================
+       CUSTOM DATE SELECTOR
+       Three fields (Month ▾ | Day ▾ | Year) displayed side-by-side.
+       Border colour matches spec: #1a4a8e
+    ================================================================ */
+    .date-selector {
+      display: flex;
+      align-items: center;
+      gap: 6px;
       width: 100%;
-      padding: 8px 10px;
-      font-family: var(--font); font-size: 16px;
+    }
+
+    /* Shared base for all three controls */
+    .ds-select,
+    .ds-year {
+      font-family: var(--font);
+      font-size: 15px;
       color: var(--clr-text);
       background: var(--clr-input-bg);
-      border: 1px solid var(--clr-input-border);
-      border-radius: 2px;
-      box-shadow: 1px 1px 2px #666;
-      outline: none; cursor: pointer;
+      border: 1.5px solid #1a4a8e;
+      border-radius: 5px;
+      padding: 7px 8px;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      cursor: pointer;
       transition: border-color var(--t), box-shadow var(--t),
                   background var(--t), color var(--t);
-      -webkit-appearance: none;
+      box-shadow: 0 1px 3px rgba(26,74,142,.15);
     }
-    input[type="date"]:focus {
+    .ds-select:focus,
+    .ds-year:focus {
       border-color: #003366;
-      box-shadow: 1px 1px 3px #336699, 0 0 0 3px rgba(0,51,102,.1);
+      box-shadow: 0 0 0 3px rgba(26,74,142,.18);
     }
-    [data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
-      filter: invert(1); opacity: .7;
+    [data-theme="dark"] .ds-select,
+    [data-theme="dark"] .ds-year {
+      border-color: #336699;
+      background: var(--clr-input-bg);
+      color: var(--clr-text);
     }
+
+    /* Month — widest to fit full abbreviated names + chevron */
+    .ds-month {
+      flex: 0 0 auto;
+      width: 108px;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6"><path d="M0 0L5 6L10 0Z" fill="%231a4a8e"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      padding-right: 26px;
+    }
+    [data-theme="dark"] .ds-month {
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6"><path d="M0 0L5 6L10 0Z" fill="%237ab3e0"/></svg>');
+    }
+
+    /* Day — compact */
+    .ds-day {
+      flex: 0 0 auto;
+      width: 82px;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6"><path d="M0 0L5 6L10 0Z" fill="%231a4a8e"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      padding-right: 24px;
+    }
+    [data-theme="dark"] .ds-day {
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6"><path d="M0 0L5 6L10 0Z" fill="%237ab3e0"/></svg>');
+    }
+
+    /* Year — number input, no spinner arrows */
+    .ds-year {
+      flex: 1 1 0;
+      min-width: 70px;
+      cursor: text;
+      text-align: center;
+    }
+    .ds-year::-webkit-inner-spin-button,
+    .ds-year::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    .ds-year { -moz-appearance: textfield; }
 
     /* Calculate button — green with SVG arrow (reference CSS) */
     .btn-calculate {
@@ -527,25 +583,72 @@
       <p class="card-subtitle">Get your precise age, zodiac sign &amp; birthday countdown.</p>
 
       <form id="age-form" novalidate>
-        <div class="form-row">
 
-          <!-- Date of Birth -->
-          <div class="form-group">
-            <label for="dob">Date of Birth</label>
-            <input type="date" id="dob" name="dob"
-              aria-label="Date of Birth" aria-required="true" />
+        <!-- ── Date of Birth selector ── -->
+        <div class="form-group" style="margin-bottom:1rem">
+          <label>Date of Birth</label>
+          <div class="date-selector" id="dob-selector" aria-label="Date of Birth">
+
+            <!-- Month -->
+            <select class="ds-select ds-month" id="dob-month" aria-label="Birth month">
+              <option value="1">Jan</option>
+              <option value="2">Feb</option>
+              <option value="3">Mar</option>
+              <option value="4">Apr</option>
+              <option value="5">May</option>
+              <option value="6">Jun</option>
+              <option value="7">Jul</option>
+              <option value="8">Aug</option>
+              <option value="9">Sep</option>
+              <option value="10">Oct</option>
+              <option value="11">Nov</option>
+              <option value="12">Dec</option>
+            </select>
+
+            <!-- Day -->
+            <select class="ds-select ds-day" id="dob-day" aria-label="Birth day"></select>
+
+            <!-- Year -->
+            <input type="number" class="ds-year" id="dob-year"
+              aria-label="Birth year"
+              value="1990" min="1900" max="2100" placeholder="Year" />
+
           </div>
+        </div>
 
-          <!-- As of Date (defaults to today) -->
-          <div class="form-group">
-            <label for="asof">
-              As of Date
-              <span class="today-badge" id="today-badge">Today</span>
-            </label>
-            <input type="date" id="asof" name="asof"
-              aria-label="As of Date (defaults to today)" />
+        <!-- ── As of Date selector ── -->
+        <div class="form-group" style="margin-bottom:1rem">
+          <label>
+            As of Date
+            <span class="today-badge" id="today-badge">Today</span>
+          </label>
+          <div class="date-selector" id="asof-selector" aria-label="As of Date">
+
+            <!-- Month -->
+            <select class="ds-select ds-month" id="asof-month" aria-label="As-of month">
+              <option value="1">Jan</option>
+              <option value="2">Feb</option>
+              <option value="3">Mar</option>
+              <option value="4">Apr</option>
+              <option value="5">May</option>
+              <option value="6">Jun</option>
+              <option value="7">Jul</option>
+              <option value="8">Aug</option>
+              <option value="9">Sep</option>
+              <option value="10">Oct</option>
+              <option value="11">Nov</option>
+              <option value="12">Dec</option>
+            </select>
+
+            <!-- Day -->
+            <select class="ds-select ds-day" id="asof-day" aria-label="As-of day"></select>
+
+            <!-- Year -->
+            <input type="number" class="ds-year" id="asof-year"
+              aria-label="As-of year"
+              value="2026" min="1900" max="2200" placeholder="Year" />
+
           </div>
-
         </div>
 
         <!-- Error -->
@@ -968,22 +1071,35 @@ function hideError() {
   document.getElementById('error-msg').classList.remove('visible');
 }
 
+/**
+ * Reads month/day/year from a custom date selector.
+ * @param {string} prefix  'dob' or 'asof'
+ * @returns {Date|null}    Date at midnight local time, or null if invalid
+ */
+function getDateFromSelector(prefix) {
+  const m = parseInt(document.getElementById(`${prefix}-month`).value, 10);
+  const d = parseInt(document.getElementById(`${prefix}-day`).value,   10);
+  const y = parseInt(document.getElementById(`${prefix}-year`).value,  10);
+  if (isNaN(m) || isNaN(d) || isNaN(y) || y < 1 || y > 9999) return null;
+  const dt = new Date(y, m - 1, d);
+  dt.setHours(0, 0, 0, 0);
+  // Guard: month may have slipped (e.g. Feb 31 → Mar 3)
+  if (dt.getMonth() !== m - 1) return null;
+  return dt;
+}
+
 document.getElementById('age-form').addEventListener('submit', function (e) {
   e.preventDefault();
   hideError();
 
-  const dobVal  = document.getElementById('dob').value;
-  const asofRaw = document.getElementById('asof').value;
-  const asofVal = asofRaw || toISOLocal(todayDate());
+  const dob  = getDateFromSelector('dob');
+  const asof = getDateFromSelector('asof') || todayDate();
 
   /* Validation */
-  if (!dobVal) {
-    showError('Please select your date of birth to continue.');
+  if (!dob) {
+    showError('Please enter a valid date of birth to continue.');
     return;
   }
-
-  const dob  = parseDate(dobVal);
-  const asof = parseDate(asofVal);
 
   if (dob > asof) {
     showError('Date of birth cannot be after the "As of" date.');
@@ -1000,9 +1116,10 @@ document.getElementById('age-form').addEventListener('submit', function (e) {
   renderResults(dob, asof);
 });
 
-/* Allow Enter key on date inputs */
-['dob', 'asof'].forEach(id => {
-  document.getElementById(id).addEventListener('keydown', e => {
+/* Enter key on year inputs submits form */
+['dob-year', 'asof-year'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('keydown', e => {
     if (e.key === 'Enter')
       document.getElementById('age-form').dispatchEvent(new Event('submit'));
   });
@@ -1068,21 +1185,96 @@ document.getElementById('btn-copy').addEventListener('click', function () {
 });
 
 /* ─────────────────────────────────────────────────────────────
-   9. INIT
+   9. CUSTOM DATE SELECTOR — Day population logic
+   Fills (or refreshes) the Day <select> based on Month + Year.
 ───────────────────────────────────────────────────────────── */
 
-/* Set "As of Date" default = today */
-const todayStr = toISOLocal(todayDate());
-const asofInput  = document.getElementById('asof');
-const todayBadge = document.getElementById('today-badge');
-asofInput.value = todayStr;
+/**
+ * Returns the number of days in a given month/year.
+ * Uses the "overflow to day 0 of next month" trick.
+ */
+function daysInMonth(month, year) {
+  return new Date(year, month, 0).getDate(); // month is 1-based here
+}
 
-asofInput.addEventListener('change', function () {
-  todayBadge.style.display = this.value === todayStr ? '' : 'none';
+/**
+ * Rebuilds the Day dropdown for a selector prefix.
+ * Preserves the previously selected day if still valid.
+ * @param {string} prefix  'dob' | 'asof'
+ */
+function updateDayDropdown(prefix) {
+  const monthSel = document.getElementById(`${prefix}-month`);
+  const daySel   = document.getElementById(`${prefix}-day`);
+  const yearInp  = document.getElementById(`${prefix}-year`);
+
+  const m = parseInt(monthSel.value, 10);
+  const y = parseInt(yearInp.value,  10) || new Date().getFullYear();
+  const maxDay = daysInMonth(m, y);
+
+  // Remember current selection
+  const prev = parseInt(daySel.value, 10) || 1;
+
+  // Rebuild options
+  daySel.innerHTML = '';
+  for (let i = 1; i <= maxDay; i++) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = i;
+    daySel.appendChild(opt);
+  }
+
+  // Restore or clamp
+  daySel.value = Math.min(prev, maxDay);
+}
+
+/* Wire up change events for both selectors */
+['dob', 'asof'].forEach(prefix => {
+  const monthSel = document.getElementById(`${prefix}-month`);
+  const yearInp  = document.getElementById(`${prefix}-year`);
+
+  monthSel.addEventListener('change', () => updateDayDropdown(prefix));
+  yearInp.addEventListener('input',   () => updateDayDropdown(prefix));
 });
 
-/* Footer year */
-document.getElementById('footer-year').textContent = new Date().getFullYear();
+/* ─────────────────────────────────────────────────────────────
+   10. INIT — set default values and populate dropdowns
+───────────────────────────────────────────────────────────── */
+(function init() {
+  const now = todayDate();
+  const todayBadge = document.getElementById('today-badge');
+
+  /* ── DOB: default to Jan 1 of a neutral past year ── */
+  document.getElementById('dob-month').value = 1;
+  document.getElementById('dob-year').value  = 1990;
+  updateDayDropdown('dob');
+  document.getElementById('dob-day').value   = 1;
+
+  /* ── As-of: default to today ── */
+  document.getElementById('asof-month').value = now.getMonth() + 1;
+  document.getElementById('asof-year').value  = now.getFullYear();
+  updateDayDropdown('asof');
+  document.getElementById('asof-day').value   = now.getDate();
+
+  /* Hide TODAY badge when user changes asof away from today */
+  function checkTodayBadge() {
+    const m = parseInt(document.getElementById('asof-month').value, 10);
+    const d = parseInt(document.getElementById('asof-day').value,   10);
+    const y = parseInt(document.getElementById('asof-year').value,  10);
+    const isToday = m === now.getMonth() + 1 &&
+                    d === now.getDate() &&
+                    y === now.getFullYear();
+    todayBadge.style.display = isToday ? '' : 'none';
+  }
+
+  ['asof-month', 'asof-day', 'asof-year'].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener('change', checkTodayBadge);
+    el.addEventListener('input',  checkTodayBadge);
+  });
+
+  /* Footer year */
+  document.getElementById('footer-year').textContent = now.getFullYear();
+})();
 </script>
 
 </body>
