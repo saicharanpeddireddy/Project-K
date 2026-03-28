@@ -47,8 +47,8 @@
       --shadow:           rgba(0,51,102,.18);
 
       /* Radii / transitions */
-      --r-card:    1.25rem;
-      --r-sm:      4px;
+      --r-card:    12px;
+      --r-sm:      12px;
       --t:         0.22s cubic-bezier(.4,0,.2,1);
     }
 
@@ -227,7 +227,7 @@
     }
 
     .form-group {
-      display: flex; flex-direction: column; gap: 4px;
+      display: flex; flex-direction: column; gap: 2px;
     }
 
     label {
@@ -256,6 +256,7 @@
       gap: 8px;
       width: 100%;
     }
+    .date-selector > * { flex: 1; }
 
     /* ── Shared base for all three controls ── */
     .ds-select,
@@ -272,6 +273,7 @@
       -webkit-appearance: none;
       cursor: pointer;
       width: 100%;
+      text-align: center;
       transition: border-color var(--t), box-shadow var(--t),
                   background var(--t), color var(--t);
       box-shadow: 1px 1px 2px rgba(0,0,0,.2);
@@ -378,13 +380,13 @@
       padding: 11px 50px 11px 16px;
       font-family: var(--font); font-size: 16px; font-weight: bold;
       color: #fff;
-      background-color: #4c7b25;
+      background-color: var(--clr-green);
       background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="180px" height="40px"><circle cx="112" cy="20" r="11" fill="darkseagreen"/><path d="M110 12 L120 20 L110 28 Z" fill="white"/></svg>');
       background-repeat: no-repeat;
-      border: 0; border-radius: 3px;
+      border: 0; border-radius: var(--r-sm);
       cursor: pointer; position: relative; overflow: hidden;
       transition: background-color var(--t), transform var(--t), box-shadow var(--t);
-      box-shadow: 0 2px 6px rgba(76,123,37,.4);
+      box-shadow: 0 4px 15px rgba(81, 132, 40, 0.4);
     }
     .btn-calculate::before {
       content: ''; position: absolute;
@@ -393,8 +395,8 @@
       transition: left .5s ease;
     }
     .btn-calculate:hover::before { left: 100%; }
-    .btn-calculate:hover { background-color: #444; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,.3); }
-    .btn-calculate:active { transform: translateY(0); background-color: #333; }
+    .btn-calculate:hover { background-color: var(--clr-green-dark); transform: translateY(-1px) scale(1.02); box-shadow: 0 6px 20px rgba(81, 132, 40, 0.5); }
+    .btn-calculate:active { transform: translateY(0) scale(1); }
 
     /* Error */
     .error-msg {
@@ -412,7 +414,7 @@
        RESULTS SECTION
     ================================================================ */
     .result-section {
-      display: none; flex-direction: column; gap: .9rem;
+      display: none; flex-direction: column; gap: 1.5rem;
       margin-top: 1.4rem;
     }
     .result-section.visible {
@@ -420,6 +422,14 @@
       animation: fadeUp .38s cubic-bezier(.22,1,.36,1) both;
     }
 
+    .hero-label {
+      font-size: 24px; font-weight: bold; text-align: center;
+      margin-bottom: 0; color: var(--clr-text);
+    }
+    .hero-label span {
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+      color: #00f0ff;
+    }
     .result-label {
       font-size: 11px; font-weight: bold;
       letter-spacing: .07em; text-transform: uppercase;
@@ -432,23 +442,24 @@
     }
 
     .stat-card {
-      background: var(--clr-stat-bg);
-      border: 1px solid var(--clr-stat-border);
-      border-radius: 6px; padding: .85rem .5rem;
+      background: transparent;
+      padding: .85rem .5rem;
       text-align: center;
-      box-shadow: 1px 1px 2px rgba(0,51,102,.08);
       transition: background var(--t), transform var(--t);
     }
     .stat-card:hover { transform: translateY(-3px); }
 
     .stat-value {
-      font-size: 2rem; font-weight: bold;
-      color: var(--zodiac-accent);
-      line-height: 1; display: block;
+      font-size: 4.5rem; font-weight: bold;
+      background: linear-gradient(135deg, #00f0ff, #0075ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1; display: inline-block;
       transition: color var(--t);
     }
     .stat-unit {
-      font-size: 11px; font-weight: bold; color: var(--clr-muted);
+      font-size: 10px; font-weight: 800; color: var(--clr-muted);
       text-transform: uppercase; letter-spacing: .06em;
       margin-top: 4px; display: block;
     }
@@ -468,14 +479,21 @@
        ZODIAC CARD
     ───────────────────────────────────── */
     .zodiac-card {
-      border: 1px solid var(--zodiac-accent);
-      border-radius: 6px; overflow: hidden;
+      background: rgba(0, 20, 50, 0.4);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(120, 160, 200, 0.2);
+      border-radius: var(--r-card); overflow: hidden;
       transition: border-color var(--t);
+    }
+    [data-theme="dark"] .zodiac-card {
+      background: rgba(10, 25, 45, 0.5);
     }
 
     .zodiac-header {
-      background: var(--zodiac-accent);
-      color: #fff;
+      background: rgba(0, 0, 0, 0.1);
+      border-bottom: 1px solid rgba(120, 160, 200, 0.15);
+      color: var(--zodiac-accent);
       padding: .7rem 1rem;
       display: flex; align-items: center; gap: .75rem;
       transition: background var(--t);
@@ -512,13 +530,19 @@
 
     /* ── Birthday countdown ── */
     .countdown-card {
-      background: linear-gradient(135deg, var(--clr-navy) 0%, var(--zodiac-accent) 100%);
-      border-radius: 6px; padding: 1rem 1.25rem;
+      background: rgba(0, 20, 50, 0.4);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(120, 160, 200, 0.2);
+      border-radius: var(--r-card); padding: 1rem 1.25rem;
       display: flex; align-items: center;
       justify-content: space-between; gap: .75rem;
-      color: #fff;
-      box-shadow: 0 3px 10px rgba(0,51,102,.3);
+      color: var(--clr-text);
+      box-shadow: 0 3px 10px rgba(0,0,0,.15);
       transition: background var(--t);
+    }
+    [data-theme="dark"] .countdown-card {
+      background: rgba(10, 25, 45, 0.5);
     }
 
     .countdown-left { display: flex; flex-direction: column; gap: 3px; }
@@ -644,7 +668,7 @@
         <!-- ── As of Date selector ── -->
         <div class="form-group" style="margin-bottom:1rem">
           <label>
-            As of Date
+            Today's Date
             <span class="today-badge" id="today-badge">Today</span>
           </label>
           <div class="date-selector" id="asof-selector" aria-label="As of Date">
@@ -706,7 +730,7 @@
         </div>
 
         <!-- ── Age breakdown ── -->
-        <p class="result-label">Your Age</p>
+        <h2 class="hero-label" id="hero-label">How old are you, <span id="hero-zodiac"></span></h2>
         <div class="stats-grid">
           <div class="stat-card">
             <span class="stat-value" id="years-val">0</span>
@@ -740,7 +764,7 @@
         <!-- ── Birthday countdown ── -->
         <div class="countdown-card" id="countdown-card">
           <div class="countdown-left">
-            <span class="countdown-eyebrow">Next Birthday</span>
+            <span class="countdown-eyebrow">Next Celebration</span>
             <span class="countdown-headline" id="countdown-headline">—</span>
             <span class="countdown-sub" id="countdown-sub">—</span>
           </div>
@@ -801,9 +825,13 @@ function parseDate(str) {
   return dt;
 }
 
-/** Format a Date → "MMM D, YYYY" */
+/** Format a Date → "MonthName DD, YYYY (Weekday)" */
 function fmtDate(d) {
-  return d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
+  const month = d.toLocaleDateString('en-US', { month: 'long' });
+  const day = d.getDate();
+  const year = d.getFullYear();
+  const weekday = d.toLocaleDateString('en-US', { weekday: 'long' });
+  return `${month} ${day}, ${year} (${weekday})`;
 }
 
 /** Hex → RGBA helper for CSS */
@@ -1024,6 +1052,7 @@ function renderResults(dob, asof) {
 
   // Title em reflects sign name
   document.getElementById('title-em').textContent = `${z.symbol} ${z.name}`;
+  document.getElementById('hero-zodiac').innerHTML = `${z.symbol} ${z.name}`;
 
   /* ── Leap-year baby ── */
   const leapBanner = document.getElementById('leap-banner');
@@ -1037,9 +1066,9 @@ function renderResults(dob, asof) {
   void section.offsetWidth; // force reflow → re-trigger animation
   section.classList.add('visible');
 
-  animateCount(document.getElementById('years-val'),  years,  700);
-  animateCount(document.getElementById('months-val'), months, 550);
-  animateCount(document.getElementById('days-val'),   days,   400);
+  animateCount(document.getElementById('years-val'),  years,  1500);
+  animateCount(document.getElementById('months-val'), months, 1500);
+  animateCount(document.getElementById('days-val'),   days,   1500);
 
   /* ── Birthday countdown ── */
   const { daysLeft, nextBirthday, turningAge } = calcCountdown(dob, asof);
@@ -1058,7 +1087,7 @@ function renderResults(dob, asof) {
   } else {
     card.classList.remove('is-today');
     headlineE.textContent = fmtDate(nextBirthday);
-    subE.textContent      = `Turning ${turningAge}`;
+    subE.textContent      = `Next Celebration`;
     labelE.textContent    = 'days away';
     animateCount(daysE, daysLeft, 800);
   }
